@@ -1,17 +1,18 @@
 package kr.ac.kopo.ecoalignbackend.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -29,37 +30,60 @@ public class JwtUtil {
     }
 
     // 1. JWT 토큰 생성 메서드
-    public String generateToken(String username) {
+    // Authentication 정보를 가지고 AccessToken, RefreshToken 생성
+
+    // AccessToken
+    public String generateAccessToken(Authentication authentication) {
+        // 권한 가져오기
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
         return Jwts.builder()
-                .setSubject(username)  // 토큰의 주제, 일반적으로 사용자명
-                .setIssuedAt(new Date())  // 토큰 발급 시간
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))  // 만료 시간, 여기서는 1시간(60분) 설정
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)  // HS256 알고리즘과 비밀 키로 서명
-                .compact();  // 토큰 생성 후 반환
+                .subject(authentication.getName()) // 토큰의 주제, 사용자명
+                .claim("auth", authorities) // "auth"라는 클레임, authorities 설정
+                .issuedAt(new Date()) // 토큰 발급 시간
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 만료 시간, 여기서는 1시간(60분) 설정
+                .signWith(SECRET_KEY, Jwts.SIG.HS256) // HS256 알고리즘과 비밀 키로 서명
+                .compact();
     }
 
-    // 2. 토큰에서 클레임(Claims -  토큰 내에 저장된 정보, 페이로드 부분) 추출
+    // RefreshToken
+    public String generateRefreshToken(Authentication authentication) {
+        return Jwts.builder()
+                .subject(authentication.getName())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .signWith(SECRET_KEY, Jwts.SIG.HS256)
+                .compact();
+    }
+
+
+    // Mapped Token
+    public Map<String, Object> generateTokens(Authentication authentication) {
+        String accessToken = generateAccessToken(authentication);
+        String refreshToken = generateRefreshToken(authentication);
+
+        return Map.of("accessToken", accessToken, "refreshToken", refreshToken);
+    }
+
+
+    // 2. 토큰에서 클레임(Claims -  토큰 내에 저장된 정보, 페이로드 부분) 추출; 복호화
     public Claims extractClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(SECRET_KEY)  // 서명에 사용된 비밀 키 설정
+                .verifyWith(SECRET_KEY) // 서명에 사용된 비밀 키 설정
                 .build()
-                .parseClaimsJws(token)  // 토큰을 파싱하여 클레임을 추출
-                .getBody();
+                .parseSignedClaims(token) // 토큰을 파싱하여 클레임을 추출
+                .getPayload();
     }
 
-    // 3. 토큰에서 사용자명 추출
-    public String extractUsername(String token) {
-        return extractClaims(token).getSubject();  // 추출된 클레임에서 주제(사용자명) 추출
-    }
-
-    // 4. 토큰 만료 여부 확인
+    // 3.  토큰 만료 여부 확인
     public boolean isTokenExpired(String token) {
         return extractClaims(token).getExpiration().before(new Date());  // 만료 시간과 현재 시간을 비교하여 만료 여부 반환
     }
 
-    // 5. 토큰 유효성 검사
+    // 4. 토큰 유효성 검사
     public boolean validateToken(String token, String username) {
-        String extractedUsername = extractUsername(token);  // 토큰에서 사용자명 추출
+        String extractedUsername = extractClaims(token).getSubject();  // 토큰에서 사용자명 추출
         return (extractedUsername.equals(username) && !isTokenExpired(token));  // 토큰의 사용자명과 전달된 사용자명을 비교, 만료되지 않았는지도 확인
     }
 }
