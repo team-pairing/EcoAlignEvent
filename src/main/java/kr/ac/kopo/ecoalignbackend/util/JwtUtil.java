@@ -9,13 +9,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret.key}")  // application.properties에서 키 값을 주입받음
+    @Value("${JWT_SECRET_KEY}") // application.properties 에서 키 값을 주입받음
     private String secretKey;
 
     private SecretKey SECRET_KEY;
@@ -24,7 +25,7 @@ public class JwtUtil {
     public void init() {
         // Base64로 인코딩된 키를 디코딩하여 SecretKey 객체로 변환
         byte[] keyBytes = Base64.getDecoder().decode(secretKey);
-        this.SECRET_KEY = Keys.hmacShaKeyFor(keyBytes);
+        this.SECRET_KEY = new SecretKeySpec(keyBytes, 0, keyBytes.length, "HmacSHA256");
     }
 
     // 1. JWT 토큰 생성 메서드
@@ -32,7 +33,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setSubject(username)  // 토큰의 주제, 일반적으로 사용자명
                 .setIssuedAt(new Date())  // 토큰 발급 시간
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))  // 만료 시간, 여기서는 1시간 설정
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))  // 만료 시간, 여기서는 1시간(60분) 설정
                 .signWith(SECRET_KEY, SignatureAlgorithm.HS256)  // HS256 알고리즘과 비밀 키로 서명
                 .compact();  // 토큰 생성 후 반환
     }
