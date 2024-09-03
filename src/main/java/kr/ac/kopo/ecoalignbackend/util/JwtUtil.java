@@ -38,7 +38,7 @@ public class JwtUtil {
                 .compact();  // 토큰 생성 후 반환
     }
 
-    // 2. 토큰에서 클레임(Claims) 추출
+    // 2. 토큰에서 클레임(Claims -  토큰 내에 저장된 정보, 페이로드 부분) 추출
     public Claims extractClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(SECRET_KEY)  // 서명에 사용된 비밀 키 설정
