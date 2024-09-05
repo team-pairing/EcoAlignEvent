@@ -19,6 +19,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     // 회원가입
+    @Override
     public User registerUser(UserDTO dto){
         User user = dtoToEntity(dto);
         userRepository.save(user); // 객체 저장
@@ -26,25 +27,41 @@ public class UserServiceImpl implements UserService {
     };
 
     // 회원탈퇴
+    @Override
     public void deleteUser(UserDTO dto){
         userRepository.deleteUserById(dto.getId());
     };
 
     // 로그인
+    @Override
     public Optional<User> loginUser(LoginUserDTO dto){
         return userRepository.findUserByIdAndPassword(dto.getId(), dto.getPassword());
     };
 
     // 아이디 찾기
+    @Override
     public Optional<User> findIdbyNameAndEmail(FindIdUserDTO dto){
         return userRepository.findUserByNameAndEmail(dto.getName(), dto.getEmail());
     };
 
     // 비밀번호 수정할 유저 찾기
+    @Override
     public Optional<User> findPasswordUser(FindPwUserDTO dto){
         return null;
     };
 
     // 비밀번호 수정
 //    public
+
+    // 아이디로 사용자 조회 - 회원정보 수정에 필요
+    @Override
+    public Optional<User> findById(String id){
+        return userRepository.findUserById(id);
+    }
+
+    // 사용자 변경사항 저장 - 회원정보 수정에 필요
+    @Override
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
 }

@@ -23,8 +23,16 @@ public interface UserService {
     // 아이디 찾기
     Optional<User> findIdbyNameAndEmail(FindIdUserDTO dto);
 
-    // 비밀번호 수정
+    // 비밀번호 수정할 유저 찾기
     Optional<User> findPasswordUser(FindPwUserDTO dto);
+
+    // 비밀번호 수정
+
+    // 아이디로 사용자 조회 - 회원정보 수정에 필요
+    Optional<User> findById(String id);
+
+    // 사용자 변경사항 저장 - 회원정보 수정에 필요
+    User saveUser(User user);
 
     // DTO를 Entity로 변환
     default User dtoToEntity(UserDTO dto){
