@@ -23,7 +23,10 @@ public class UserController {
     }
 
     // 회원가입
-    public void signUp(){}
+    @PostMapping("/signUp")
+    public void signUp(@RequestBody UserDTO userDTO){
+        User user = userService.registerUser(userDTO); // 사용자 생성 및 저장
+    }
 
     // 회원탈퇴
     public void signOut(){}
