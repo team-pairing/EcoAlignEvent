@@ -5,7 +5,6 @@ import kr.ac.kopo.ecoalignbackend.dto.FindPwUserDTO;
 import kr.ac.kopo.ecoalignbackend.dto.LoginUserDTO;
 import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
 import kr.ac.kopo.ecoalignbackend.entity.User;
-import org.springframework.security.core.Authentication;
 
 import java.util.Optional;
 
@@ -17,8 +16,8 @@ public interface UserService {
     // 회원 탈퇴
     void deleteUser(UserDTO dto);
 
-    // 로그인
-    Optional<User> loginUser(LoginUserDTO dto);
+    // 아이디와 비밀번호로 사용자 찾기
+    Optional<User> findUserByIdAndPassword(LoginUserDTO dto);
 
     // 아이디 찾기
     Optional<User> findIdbyNameAndEmail(FindIdUserDTO dto);

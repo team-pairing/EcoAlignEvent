@@ -1,5 +1,6 @@
 package kr.ac.kopo.ecoalignbackend.service.Impl;
 
+import jakarta.transaction.Transactional;
 import kr.ac.kopo.ecoalignbackend.dto.FindIdUserDTO;
 import kr.ac.kopo.ecoalignbackend.dto.FindPwUserDTO;
 import kr.ac.kopo.ecoalignbackend.dto.LoginUserDTO;
@@ -32,10 +33,10 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteUserById(dto.getId());
     };
 
-    // 로그인
+    // 아이디와 비밀번호로 사용자 찾기
     @Override
-    public Optional<User> loginUser(LoginUserDTO dto){
-        return userRepository.findUserByIdAndPassword(dto.getId(), dto.getPassword());
+    public Optional<User> findUserByIdAndPassword(LoginUserDTO dto){
+        return userRepository.findUserByIdAndPassword(dto.getMember_id(), dto.getPassword());
     };
 
     // 아이디 찾기
@@ -44,7 +45,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserByNameAndEmail(dto.getName(), dto.getEmail());
     };
 
-    // 비밀번호 수정할 유저 찾기
+    // 비밀번호 수정할 사용자 찾기
     @Override
     public Optional<User> findPasswordUser(FindPwUserDTO dto){
         return null;
@@ -61,6 +62,7 @@ public class UserServiceImpl implements UserService {
 
     // 사용자 변경사항 저장 - 회원정보 수정에 필요
     @Override
+    @Transactional
     public User saveUser(User user) {
         return userRepository.save(user);
     }

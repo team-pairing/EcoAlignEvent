@@ -1,9 +1,12 @@
 package kr.ac.kopo.ecoalignbackend.dto;
 
-import lombok.Data;
+import lombok.*;
 
 @Data
-public class LoginUserDTO extends UserDTO {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoginUserDTO {
         private String member_id;
         private String password;
 }

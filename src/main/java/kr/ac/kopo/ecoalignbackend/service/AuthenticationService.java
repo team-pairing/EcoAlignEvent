@@ -18,10 +18,9 @@ public class AuthenticationService {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(member_id, password)
             ); // 아이디와 비밀번호로 자격 생성
-            return authentication;
+            return authentication; // principal = member_id, credentials = password, authorities = ?
         } catch (AuthenticationException e) {
             throw new RuntimeException("Authentication failed", e);
         }
     }
 }
-
