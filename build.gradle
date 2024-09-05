@@ -31,6 +31,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security 사용을 위해 설정
 	implementation 'io.jsonwebtoken:jjwt:0.12.6' // jwt 생성 및 검증을 위해 설정
 	implementation 'io.github.cdimascio:dotenv-java:3.0.1' // 암호화 키 환경변수로 관리하기 위한 설정
+	implementation 'org.springframework.boot:spring-boot-starter-mail' // 이메일 인증을 위한 설정
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
