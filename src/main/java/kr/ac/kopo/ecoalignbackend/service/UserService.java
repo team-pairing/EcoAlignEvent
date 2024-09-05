@@ -17,10 +17,10 @@ public interface UserService {
     void deleteUser(UserDTO dto);
 
     // 아이디와 비밀번호로 사용자 찾기
-    Optional<User> findUserByIdAndPassword(LoginUserDTO dto);
+    Optional<User> findUserByMemberIdAndPassword(LoginUserDTO dto);
 
     // 아이디 찾기
-    Optional<User> findIdbyNameAndEmail(FindIdUserDTO dto);
+    Optional<User> findMemberIdbyNameAndEmail(FindIdUserDTO dto);
 
     // 비밀번호 수정할 유저 찾기
     Optional<User> findPasswordUser(FindPwUserDTO dto);
@@ -37,7 +37,7 @@ public interface UserService {
     default User dtoToEntity(UserDTO dto){
         return User.builder()
                 .id(dto.getId())
-                .member_id(dto.getMember_id())
+                .memberId(dto.getMemberId())
                 .password(dto.getPassword())
                 .email(dto.getEmail())
                 .name(dto.getName())
@@ -50,7 +50,7 @@ public interface UserService {
     default UserDTO entityToDto(User entity){
         return UserDTO.builder()
                 .id(entity.getId())
-                .member_id(entity.getMember_id())
+                .memberId(entity.getMemberId())
                 .password(entity.getPassword())
                 .email(entity.getEmail())
                 .name(entity.getName())

@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FindPwUserDTO{
-    private String member_id;
+    private String memberId;
     private String email;
 }

@@ -30,8 +30,10 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/signUp")
-    public void signUp(@RequestBody UserDTO userDTO){
+    public User signUp(@RequestBody UserDTO userDTO){
         User user = userService.registerUser(userDTO); // 사용자 생성 및 저장
+        System.out.println("Created User : " + user);
+        return user;
     }
 
     // 회원탈퇴
@@ -40,23 +42,17 @@ public class UserController {
     // 로그인
     @PostMapping("/logIn")
     public String logIn(@RequestBody LoginUserDTO loginUserDTO){
-        Optional<User> user = userService.findUserByIdAndPassword(loginUserDTO);
+        System.out.println("Received LoginUserDTO: " + loginUserDTO);
+        Optional<User> user = userService.findUserByMemberIdAndPassword(loginUserDTO);
         if (user.isPresent()){
-            String member_id = user.get().getMember_id();
+            String memberId = user.get().getMemberId();
             String password = user.get().getPassword();
             // 자격을 생성
-            Authentication authentication = authenticationService.authenticate(member_id, password);
-            System.out.println(authentication.getPrincipal());
-            System.out.println(authentication.getCredentials());
-            System.out.println(authentication.getAuthorities());
-            System.out.println(authentication.getDetails());
+            Authentication authentication = authenticationService.authenticate(memberId, password);
             // 자격을 통해 token 생성
             String token = jwtUtil.generateAccessToken(authentication);
-            return token;
         }
-        else{
-            return "오류";
-        }
+        return "";
     }
 
     // 아이디 찾기

@@ -35,13 +35,13 @@ public class UserServiceImpl implements UserService {
 
     // 아이디와 비밀번호로 사용자 찾기
     @Override
-    public Optional<User> findUserByIdAndPassword(LoginUserDTO dto){
-        return userRepository.findUserByIdAndPassword(dto.getMember_id(), dto.getPassword());
+    public Optional<User> findUserByMemberIdAndPassword(LoginUserDTO dto){
+        return userRepository.findUSerByMemberIdAndPassword(dto.getMemberId(), dto.getPassword());
     };
 
     // 아이디 찾기
     @Override
-    public Optional<User> findIdbyNameAndEmail(FindIdUserDTO dto){
+    public Optional<User> findMemberIdbyNameAndEmail(FindIdUserDTO dto){
         return userRepository.findUserByNameAndEmail(dto.getName(), dto.getEmail());
     };
 

@@ -13,10 +13,10 @@ public class AuthenticationService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public Authentication authenticate(String member_id, String password) {
+    public Authentication authenticate(String memberId, String password) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(member_id, password)
+                    new UsernamePasswordAuthenticationToken(memberId, password)
             ); // 아이디와 비밀번호로 자격 생성
             return authentication; // principal = member_id, credentials = password, authorities = ?
         } catch (AuthenticationException e) {

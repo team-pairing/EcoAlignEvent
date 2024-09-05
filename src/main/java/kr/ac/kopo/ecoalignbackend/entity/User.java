@@ -24,22 +24,22 @@ public class User implements UserDetails {
     @Id
     private String id;
 
-    @Column(name = "member_id", length = 20, nullable = false)
-    private String member_id;
+    @Column(name="member_id", length = 20, nullable = false)
+    private String memberId;
 
-    @Column(name = "password", length = 20, nullable = false)
+    @Column(length = 20, nullable = false)
     private String password;
 
-    @Column(name = "email", length = 30, nullable = false, unique = true)
+    @Column(length = 30, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "name", length = 20, nullable = false)
+    @Column(length = 20, nullable = false)
     private String name;
 
-    @Column(name = "birth")
+    @Column
     private String birth;
 
-    @Column(name = "gender")
+    @Column
     private String gender;
 
     @PrePersist
@@ -60,7 +60,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.member_id;
+        return this.memberId;
     }
 
     @Override

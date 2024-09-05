@@ -5,7 +5,6 @@ import kr.ac.kopo.ecoalignbackend.dto.CodeDTO;
 import kr.ac.kopo.ecoalignbackend.dto.MailDTO;
 import kr.ac.kopo.ecoalignbackend.service.MailService;
 import kr.ac.kopo.ecoalignbackend.util.JwtUtil;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

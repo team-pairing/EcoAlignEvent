@@ -91,7 +91,7 @@ public class JwtUtil {
                 .verifyWith(SECRET_KEY)
                 .build()
                 .parseSignedClaims(token)
-                .getBody()
+                .getPayload()
                 .getSubject();
     }
 
