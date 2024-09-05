@@ -20,7 +20,7 @@ public class JwtUtil {
     @Value("${JWT_SECRET_KEY}") // application.properties 에서 키 값을 주입받음
     private String secretKey;
 
-    private SecretKey SECRET_KEY;
+    private static SecretKey SECRET_KEY;
 
     @PostConstruct
     public void init() {
@@ -30,10 +30,19 @@ public class JwtUtil {
     }
 
     // 1. JWT 토큰 생성 메서드
-    // Authentication 정보를 가지고 AccessToken, RefreshToken 생성
+    // Token - subject로 생성, 이메일 인증에 사용
+    public static String generateToken(String subject) {
+        return Jwts.builder()
+                .subject(subject)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 3))  // 3분 유효
+                .signWith(SECRET_KEY, Jwts.SIG.HS256)
+                .compact();
+    }
 
-    // AccessToken
-    public String generateAccessToken(Authentication authentication) {
+    // Authentication 정보를 가지고 AccessToken, RefreshToken 생성
+    // AccessToken - 자격으로 생성
+    public static String generateAccessToken(Authentication authentication) {
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -48,8 +57,8 @@ public class JwtUtil {
                 .compact();
     }
 
-    // RefreshToken
-    public String generateRefreshToken(Authentication authentication) {
+    // RefreshToken - 자격으로 생성
+    public static String generateRefreshToken(Authentication authentication) {
         return Jwts.builder()
                 .subject(authentication.getName())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
@@ -59,7 +68,7 @@ public class JwtUtil {
 
 
     // Mapped Token
-    public Map<String, Object> generateTokens(Authentication authentication) {
+    public static Map<String, Object> generateTokens(Authentication authentication) {
         String accessToken = generateAccessToken(authentication);
         String refreshToken = generateRefreshToken(authentication);
 
@@ -68,7 +77,7 @@ public class JwtUtil {
 
 
     // 2. 토큰에서 클레임(Claims -  토큰 내에 저장된 정보, 페이로드 부분) 추출; 복호화
-    public Claims extractClaims(String token) {
+    public static Claims extractClaims(String token) {
         return Jwts.parser()
                 .verifyWith(SECRET_KEY) // 서명에 사용된 비밀 키 설정
                 .build()
@@ -76,13 +85,23 @@ public class JwtUtil {
                 .getPayload();
     }
 
+    // 3. 토큰에서 subject 추출
+    public static String extractSubject(String token) {
+        return Jwts.parser()
+                .verifyWith(SECRET_KEY)
+                .build()
+                .parseSignedClaims(token)
+                .getBody()
+                .getSubject();
+    }
+
     // 3.  토큰 만료 여부 확인
-    public boolean isTokenExpired(String token) {
+    public static boolean isTokenExpired(String token) {
         return extractClaims(token).getExpiration().before(new Date());  // 만료 시간과 현재 시간을 비교하여 만료 여부 반환
     }
 
     // 4. 토큰 유효성 검사
-    public boolean validateToken(String token, String username) {
+    public static boolean validateToken(String token, String username) {
         String extractedUsername = extractClaims(token).getSubject();  // 토큰에서 사용자명 추출
         return (extractedUsername.equals(username) && !isTokenExpired(token));  // 토큰의 사용자명과 전달된 사용자명을 비교, 만료되지 않았는지도 확인
     }
