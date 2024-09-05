@@ -4,12 +4,10 @@ import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
 import kr.ac.kopo.ecoalignbackend.entity.User;
 import kr.ac.kopo.ecoalignbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/user")
