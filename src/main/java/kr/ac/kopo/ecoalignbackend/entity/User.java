@@ -34,14 +34,6 @@ public class User {
     @Column
     private String gender;
 
-    @ManyToMany(fetch = FetchType.EAGER) // FetchType.EAGER를 사용하여 권한을 즉시 로드
-    @JoinTable(
-            name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles;
-
     @PrePersist
     public void generateId(){
         id = UUID.randomUUID().toString();
