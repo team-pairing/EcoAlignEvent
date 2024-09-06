@@ -22,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // 아이디로 회원 탈퇴
     Optional<User> deleteUserById (String id);
+
+    Optional<Object> findByMemberId(String username);
 }

@@ -3,13 +3,18 @@ package kr.ac.kopo.ecoalignbackend.controller;
 import kr.ac.kopo.ecoalignbackend.dto.LoginUserDTO;
 import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
 import kr.ac.kopo.ecoalignbackend.entity.User;
-import kr.ac.kopo.ecoalignbackend.service.AuthenticationService;
 import kr.ac.kopo.ecoalignbackend.service.UserService;
 import kr.ac.kopo.ecoalignbackend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,22 +23,49 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final AuthenticationService authenticationService;
+    private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
-    public UserController(UserService userService, AuthenticationService authenticationService, JwtUtil jwtUtil) {
+    public UserController(UserService userService, AuthenticationManager authenticationManager,
+                          JwtUtil jwtUtil, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userService = userService;
-        this.authenticationService = authenticationService;
+        this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     // 회원가입
     @PostMapping("/signUp")
-    public User signUp(@RequestBody UserDTO userDTO){
-        User user = userService.registerUser(userDTO); // 사용자 생성 및 저장
-        System.out.println("Created User : " + user);
-        return user;
+    public ResponseEntity<Map<String, Object>> signUp(@RequestBody UserDTO userDTO){
+        // UserDTO에서 User 엔티티로 변환
+        User user = User.builder()
+                .memberId(userDTO.getMemberId())
+                .email(userDTO.getEmail())
+                .name(userDTO.getName())
+                .birth(userDTO.getBirth())
+                .gender(userDTO.getGender())
+                .build();
+
+        // 비밀번호 암호화
+        String encodedPassword = bCryptPasswordEncoder.encode(userDTO.getPassword());
+        user.setPassword(encodedPassword);
+
+        // 사용자 생성 및 저장
+        User createdUser = userService.registerUser(user); // 서비스 레이어에서 저장
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("id", createdUser.getId());
+        responseMap.put("memberId", createdUser.getMemberId());
+        responseMap.put("password", createdUser.getPassword());
+        responseMap.put("email", createdUser.getEmail());
+        responseMap.put("name", createdUser.getName());
+        responseMap.put("birth", createdUser.getBirth());
+        responseMap.put("gender", createdUser.getGender());
+
+        System.out.println("Created User: " + responseMap);
+
+        return ResponseEntity.ok(responseMap);
     }
 
     // 회원탈퇴
@@ -41,18 +73,29 @@ public class UserController {
 
     // 로그인
     @PostMapping("/logIn")
-    public String logIn(@RequestBody LoginUserDTO loginUserDTO){
+    public ResponseEntity<Map<String, String>> logIn(@RequestBody LoginUserDTO loginUserDTO) {
         System.out.println("Received LoginUserDTO: " + loginUserDTO);
-        Optional<User> user = userService.findUserByMemberIdAndPassword(loginUserDTO);
-        if (user.isPresent()){
-            String memberId = user.get().getMemberId();
-            String password = user.get().getPassword();
-            // 자격을 생성
-            Authentication authentication = authenticationService.authenticate(memberId, password);
-            // 자격을 통해 token 생성
-            String token = jwtUtil.generateAccessToken(authentication);
-        }
-        return "";
+
+        // 사용자 인증
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginUserDTO.getMemberId(),
+                        loginUserDTO.getPassword()
+                )
+        );
+
+
+        // 인증된 사용자의 정보 저장
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // JWT 토큰 생성
+        String token = jwtUtil.generateAccessToken(authentication);
+
+        // 응답 준비
+        Map<String, String> responseMap = new HashMap<>();
+        responseMap.put("token", token);
+
+        return ResponseEntity.ok(responseMap);
     }
 
     // 아이디 찾기

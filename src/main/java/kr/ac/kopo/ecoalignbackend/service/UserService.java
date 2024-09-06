@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface UserService {
 
     // 회원가입
-    User registerUser(UserDTO dto);
+    User registerUser(User entity);
 
     // 회원 탈퇴
     void deleteUser(UserDTO dto);

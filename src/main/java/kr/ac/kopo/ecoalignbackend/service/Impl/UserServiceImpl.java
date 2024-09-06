@@ -21,10 +21,9 @@ public class UserServiceImpl implements UserService {
 
     // 회원가입
     @Override
-    public User registerUser(UserDTO dto){
-        User user = dtoToEntity(dto);
-        userRepository.save(user); // 객체 저장
-        return user;
+    public User registerUser(User entity){
+        userRepository.save(entity); // 객체 저장
+        return entity;
     };
 
     // 회원탈퇴
