@@ -1,5 +1,6 @@
 package kr.ac.kopo.ecoalignbackend.entity;
 import jakarta.persistence.*;
+import kr.ac.kopo.ecoalignbackend.RoleType;
 import lombok.*;
 
 import java.util.UUID;

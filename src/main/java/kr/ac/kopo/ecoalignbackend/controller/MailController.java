@@ -3,8 +3,8 @@ package kr.ac.kopo.ecoalignbackend.controller;
 import jakarta.mail.MessagingException;
 import kr.ac.kopo.ecoalignbackend.dto.CodeDTO;
 import kr.ac.kopo.ecoalignbackend.dto.MailDTO;
+import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
 import kr.ac.kopo.ecoalignbackend.service.MailService;
-import kr.ac.kopo.ecoalignbackend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

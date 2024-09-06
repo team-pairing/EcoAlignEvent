@@ -26,7 +26,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @AllArgsConstructor
 public class SecurityConfig {
-    private final CustomUserDetailsService customUserDetailsService;
     private final JwtUtil jwtUtil;
 
     private static final String[] AUTH_WHITELIST = {}; // 인증처리 PASS할 모든 경로
@@ -34,15 +33,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 보안 비활성화
-        http.csrf((csrf) -> csrf.disable());
+        http.csrf(AbstractHttpConfigurer::disable);
         http.cors(Customizer.withDefaults());
         // JWT 사용하기 때문에 세션 사용 안함
         http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         //FormLogin, BasicHttp 비활성화
-        http.formLogin((form) -> form.disable());
+        http.formLogin(AbstractHttpConfigurer::disable);
         http.httpBasic(AbstractHttpConfigurer::disable);
         //JwtAuthFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
-        http.addFilterBefore(new JwtAuthFilter(customUserDetailsService, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 
 //        http.exceptionHandling((exceptionHandling) -> exceptionHandling
 //                .authenticationEntryPoint(authenticationEntryPoint)

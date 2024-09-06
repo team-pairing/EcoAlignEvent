@@ -1,5 +1,6 @@
 package kr.ac.kopo.ecoalignbackend.dto;
 
+import kr.ac.kopo.ecoalignbackend.RoleType;
 import lombok.*;
 
 @Data

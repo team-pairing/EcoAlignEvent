@@ -70,6 +70,16 @@ public class JwtUtil {
         return parseClaims(token).get("memberId", String.class);
     }
 
+    // 5. Claims에서 Subject 추출
+    public String extractSubject(String token) {
+        return Jwts.parser()
+                .verifyWith((PublicKey) secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
+    }
+
     // 5. JWT 검증
     public boolean validateToken(String token){
         try {
