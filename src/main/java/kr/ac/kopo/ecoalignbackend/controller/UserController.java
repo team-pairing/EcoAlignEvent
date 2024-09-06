@@ -4,8 +4,8 @@ import kr.ac.kopo.ecoalignbackend.dto.LoginUserDTO;
 import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
 import kr.ac.kopo.ecoalignbackend.entity.User;
 import kr.ac.kopo.ecoalignbackend.service.UserService;
-import kr.ac.kopo.ecoalignbackend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,18 +23,12 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Autowired
-    public UserController(UserService userService, AuthenticationManager authenticationManager,
-                          JwtUtil jwtUtil, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
+
 
     // 회원가입
     @PostMapping("/signUp")
@@ -73,29 +67,9 @@ public class UserController {
 
     // 로그인
     @PostMapping("/logIn")
-    public ResponseEntity<Map<String, String>> logIn(@RequestBody LoginUserDTO loginUserDTO) {
-        System.out.println("Received LoginUserDTO: " + loginUserDTO);
-
-        // 사용자 인증
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginUserDTO.getMemberId(),
-                        loginUserDTO.getPassword()
-                )
-        );
-
-
-        // 인증된 사용자의 정보 저장
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        // JWT 토큰 생성
-        String token = jwtUtil.generateAccessToken(authentication);
-
-        // 응답 준비
-        Map<String, String> responseMap = new HashMap<>();
-        responseMap.put("token", token);
-
-        return ResponseEntity.ok(responseMap);
+    public ResponseEntity<String> logIn(@RequestBody LoginUserDTO loginUserDTO) {
+        String token = this.userService.logIn(loginUserDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(token);
     }
 
     // 아이디 찾기

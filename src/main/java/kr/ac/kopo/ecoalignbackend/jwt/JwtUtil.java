@@ -5,7 +5,7 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
+import kr.ac.kopo.ecoalignbackend.dto.CustomUserInfoDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -42,11 +42,11 @@ public class JwtUtil {
     }
 
     // 2. JWT 생성 : DTO로 생성
-    public String createToken(UserDTO userDTO) {
+    public String createToken(CustomUserInfoDTO customUserInfoDTO) {
         Claims claims = (Claims) Jwts.claims();
-        claims.put("memberId", userDTO.getMemberId());
-        claims.put("name", userDTO.getName());
-        claims.put("role", userDTO.getRole());
+        claims.put("memberId", customUserInfoDTO.getMemberId());
+        claims.put("name", customUserInfoDTO.getName());
+        claims.put("role", customUserInfoDTO.getRole());
 
         return Jwts.builder()
                 .claims(claims)

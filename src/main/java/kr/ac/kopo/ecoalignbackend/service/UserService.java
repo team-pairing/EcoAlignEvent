@@ -13,8 +13,8 @@ public interface UserService {
     // 회원가입
     User registerUser(User entity);
 
-    // 회원 탈퇴
-    void deleteUser(UserDTO dto);
+    // 로그인
+    String logIn(LoginUserDTO loginUserDTO);
 
     // 아이디와 비밀번호로 사용자 찾기
     Optional<User> findUserByMemberIdAndPassword(LoginUserDTO dto);

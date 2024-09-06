@@ -2,7 +2,6 @@ package kr.ac.kopo.ecoalignbackend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -33,6 +32,10 @@ public class User {
 
     @Column
     private String gender;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ROLE", nullable = false)
+    private RoleType role;
 
     @PrePersist
     public void generateId(){
