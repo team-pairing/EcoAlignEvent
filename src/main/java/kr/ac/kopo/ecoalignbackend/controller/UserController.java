@@ -1,20 +1,10 @@
 package kr.ac.kopo.ecoalignbackend.controller;
 
-import kr.ac.kopo.ecoalignbackend.dto.LoginUserDTO;
 import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
 import kr.ac.kopo.ecoalignbackend.entity.User;
 import kr.ac.kopo.ecoalignbackend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -23,8 +13,6 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -32,34 +20,7 @@ public class UserController {
 
     // 회원가입
     @PostMapping("/signUp")
-    public ResponseEntity<Map<String, Object>> signUp(@RequestBody UserDTO userDTO){
-        // UserDTO에서 User 엔티티로 변환
-        User user = User.builder()
-                .memberId(userDTO.getMemberId())
-                .email(userDTO.getEmail())
-                .name(userDTO.getName())
-                .birth(userDTO.getBirth())
-                .gender(userDTO.getGender())
-                .build();
-
-        // 비밀번호 암호화
-        String encodedPassword = bCryptPasswordEncoder.encode(userDTO.getPassword());
-        user.setPassword(encodedPassword);
-
-        // 사용자 생성 및 저장
-        User createdUser = userService.registerUser(user); // 서비스 레이어에서 저장
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("id", createdUser.getId());
-        responseMap.put("memberId", createdUser.getMemberId());
-        responseMap.put("password", createdUser.getPassword());
-        responseMap.put("email", createdUser.getEmail());
-        responseMap.put("name", createdUser.getName());
-        responseMap.put("birth", createdUser.getBirth());
-        responseMap.put("gender", createdUser.getGender());
-
-        System.out.println("Created User: " + responseMap);
-
-        return ResponseEntity.ok(responseMap);
+    public void signUp(){
     }
 
     // 회원탈퇴
@@ -67,9 +28,7 @@ public class UserController {
 
     // 로그인
     @PostMapping("/logIn")
-    public ResponseEntity<String> logIn(@RequestBody LoginUserDTO loginUserDTO) {
-        String token = this.userService.logIn(loginUserDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(token);
+    public void logIn() {
     }
 
     // 아이디 찾기

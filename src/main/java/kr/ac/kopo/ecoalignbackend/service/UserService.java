@@ -1,9 +1,6 @@
 package kr.ac.kopo.ecoalignbackend.service;
 
-import kr.ac.kopo.ecoalignbackend.dto.FindIdUserDTO;
-import kr.ac.kopo.ecoalignbackend.dto.FindPwUserDTO;
-import kr.ac.kopo.ecoalignbackend.dto.LoginUserDTO;
-import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
+import kr.ac.kopo.ecoalignbackend.dto.*;
 import kr.ac.kopo.ecoalignbackend.entity.User;
 
 import java.util.Optional;
@@ -11,19 +8,19 @@ import java.util.Optional;
 public interface UserService {
 
     // 회원가입
-    User registerUser(User entity);
+    User registerUser();
 
     // 로그인
-    String logIn(LoginUserDTO loginUserDTO);
+    String logIn();
 
     // 아이디와 비밀번호로 사용자 찾기
-    Optional<User> findUserByMemberIdAndPassword(LoginUserDTO dto);
+    Optional<User> findUserByMemberIdAndPassword();
 
     // 아이디 찾기
-    Optional<User> findMemberIdbyNameAndEmail(FindIdUserDTO dto);
+    Optional<User> findMemberIdbyNameAndEmail();
 
     // 비밀번호 수정할 유저 찾기
-    Optional<User> findPasswordUser(FindPwUserDTO dto);
+    Optional<User> findPasswordUser();
 
     // 비밀번호 수정
 
