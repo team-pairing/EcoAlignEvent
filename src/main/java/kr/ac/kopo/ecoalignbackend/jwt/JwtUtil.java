@@ -66,8 +66,8 @@ public class JwtUtil {
     }
 
     // 4. Claims에서 User Id(memberId) 추출
-    public Long getUserId(String token){
-        return parseClaims(token).get("memberId", Long.class);
+    public String getUserId(String token){
+        return parseClaims(token).get("memberId", String.class);
     }
 
     // 5. JWT 검증
