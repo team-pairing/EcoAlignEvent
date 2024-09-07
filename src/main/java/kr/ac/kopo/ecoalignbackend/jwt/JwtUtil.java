@@ -66,36 +66,7 @@ public class JwtUtil {
                 .subject(userDTO.getId())
                 .claim("memberId", userDTO.getMemberId())
                 .claim("name", userDTO.getName())
-                .claim("authorities", userDTO.getAuthority())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + accessTokenExpTime)) // 1시간 유효
-                .signWith(secretKey) // 서명 알고리즘 명시
-                .compact();
-
-        return Token.builder()
-                .grantType("Bearer")
-                .accessToken(token)
-                .build();
-    }
-
-    // 2-1. JWT 생성 : Authentication으로 생성
-    public Token makeToken(Authentication authentication) {
-        // 권한 가져오기
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        UserEntity user = (UserEntity) authentication.getPrincipal();
-        String id = user.getId();
-        String memberId = user.getMemberId();
-        String name = user.getName();
-
-        // JWT 토큰 생성
-        String token = Jwts.builder()
-                .subject(id)
-                .claim("memberId", memberId)
-                .claim("name", name)
-                .claim("auth", authorities)
+                .claim("auth", userDTO.getAuthority())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpTime)) // 1시간 유효
                 .signWith(secretKey) // 서명 알고리즘 명시
