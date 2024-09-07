@@ -2,43 +2,32 @@ package kr.ac.kopo.ecoalignbackend.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import kr.ac.kopo.ecoalignbackend.service.UserService;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 
-public class JwtAuthFilter extends OncePerRequestFilter { // OncePerRequestFilter -> 한 번 실행 보장
-    private JwtUtil jwtUtil;
-    private UserService userService;
+@RequiredArgsConstructor
+public class JwtAuthFilter extends GenericFilterBean {
+    private final JwtUtil jwtUtil;
 
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // 1. Request Header에서 JWT 추출
+        String token = jwtUtil.resolveToken((HttpServletRequest) request);
 
-        // JWT가 Header에 존재할 때
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer")) {
-            String token = authorizationHeader.substring(7);
-            // JWT 유효성 검사
-            if (jwtUtil.validateToken(token)) {
-                String memberId = jwtUtil.getUserId(token);
-
-                // 사용자와 토큰이 일치하면 userDetails 생성
-                UserDetails userDetails = userService.loadUserByUsername(memberId);
-                if (userDetails != null) {
-                    // userDetails, password, role로 접근 권한 인증 token 생성
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    // 현재 request의 security context에 접근권한 설정
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }
-                filterChain.doFilter(request, response); // 다음 필터로 넘기기
-            }
+        // 2. validateToken으로 유효성 검사
+        if (token != null && jwtUtil.validateToken(token)) {
+            // 토큰이 유효하면 토큰에서 authentication 객체를 추출해 securityContext에 저장
+            Authentication authentication = jwtUtil.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+        filterChain.doFilter(request, response);
     }
 }
