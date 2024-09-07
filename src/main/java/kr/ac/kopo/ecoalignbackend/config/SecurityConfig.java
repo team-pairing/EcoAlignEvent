@@ -1,6 +1,7 @@
 package kr.ac.kopo.ecoalignbackend.config;
 
 //import kr.ac.kopo.ecoalignbackend.jwt.JwtAuthFilter;
+import io.jsonwebtoken.ClaimsBuilder;
 import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

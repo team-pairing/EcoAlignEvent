@@ -31,7 +31,6 @@ public class MailController {
         Token token = jwtUtil.generateToken(authCode); // 인증 코드로 JWT 토큰 생성
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
-//        System.out.println("Generated JWT Token: " + token); // JWT 토큰을 출력
         return ResponseEntity.ok().headers(headers).body(authCode); // Response body에 값을 반환
     }
 

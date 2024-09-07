@@ -2,8 +2,10 @@ package kr.ac.kopo.ecoalignbackend.jwt;
 
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.impl.DefaultClaimsBuilder;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
@@ -24,13 +26,15 @@ public class JwtUtil {
     private String SECRET_KEY;
     private Key secretKey;
     private long accessTokenExpTime;
+    private long authTokenExpTime;
 
     @PostConstruct
     public void init() {
         // Base64로 인코딩된 키를 디코딩하여 SecretKey 객체로 변환
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
-        this.accessTokenExpTime = 1000 * 60 * 3; // 3분간 유효
+        this.accessTokenExpTime = 1000 * 60 * 60; // 60분간 유효
+        this.authTokenExpTime = 1000 * 60 * 3; // 3분간 유효
     }
 
     // 1. JWT 생성 : subject로 생성
@@ -39,7 +43,7 @@ public class JwtUtil {
         String token = Jwts.builder()
                 .subject(authCode)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + accessTokenExpTime))
+                .expiration(new Date(System.currentTimeMillis() + authTokenExpTime))
                 .signWith(secretKey)
                 .compact();
 
@@ -51,16 +55,15 @@ public class JwtUtil {
 
     // 2. JWT 생성 : DTO로 생성
     public Token createToken(UserDTO userDTO) {
-        Claims claims = (Claims) Jwts.claims();
-        claims.put("memberId", userDTO.getMemberId());
-        claims.put("name", userDTO.getName());
-        claims.put("role", userDTO.getRole());
-
+        // JWT 토큰 생성
         String token = Jwts.builder()
-                .claims(claims)
+                .subject(userDTO.getId())
+                .claim("memberId", userDTO.getMemberId())
+                .claim("name", userDTO.getName())
+                .claim("authorities", userDTO.getAuthority())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + accessTokenExpTime))
-                .signWith(secretKey)
+                .expiration(new Date(System.currentTimeMillis() + accessTokenExpTime)) // 1시간 유효
+                .signWith(secretKey) // 서명 알고리즘 명시
                 .compact();
 
         return Token.builder()
@@ -68,6 +71,7 @@ public class JwtUtil {
                 .accessToken(token)
                 .build();
     }
+
 
     // 3. JWT Claims 추출
     public Claims parseClaims(String token) {
@@ -98,7 +102,7 @@ public class JwtUtil {
         try {
             Jwts.parser().verifyWith((SecretKey) secretKey).build().parseSignedClaims(token);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+        } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
