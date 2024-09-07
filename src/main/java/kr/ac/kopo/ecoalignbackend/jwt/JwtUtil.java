@@ -9,15 +9,21 @@ import io.jsonwebtoken.security.SecurityException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
+import kr.ac.kopo.ecoalignbackend.entity.UserEntity;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.security.PublicKey;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Component
@@ -61,6 +67,35 @@ public class JwtUtil {
                 .claim("memberId", userDTO.getMemberId())
                 .claim("name", userDTO.getName())
                 .claim("authorities", userDTO.getAuthority())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + accessTokenExpTime)) // 1시간 유효
+                .signWith(secretKey) // 서명 알고리즘 명시
+                .compact();
+
+        return Token.builder()
+                .grantType("Bearer")
+                .accessToken(token)
+                .build();
+    }
+
+    // 2-1. JWT 생성 : Authentication으로 생성
+    public Token makeToken(Authentication authentication) {
+        // 권한 가져오기
+        String authorities = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        UserEntity user = (UserEntity) authentication.getPrincipal();
+        String id = user.getId();
+        String memberId = user.getMemberId();
+        String name = user.getName();
+
+        // JWT 토큰 생성
+        String token = Jwts.builder()
+                .subject(id)
+                .claim("memberId", memberId)
+                .claim("name", name)
+                .claim("auth", authorities)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpTime)) // 1시간 유효
                 .signWith(secretKey) // 서명 알고리즘 명시
@@ -122,5 +157,29 @@ public class JwtUtil {
         } else {
             return null;
         }
+    }
+
+    // 7. JWT 복호화 : token의 정보 반환
+    public Authentication getAuthentication(String accessToken) {
+        // claim 추출 - 복호화
+        Claims claims = parseClaims(accessToken);
+
+        if (claims.get("auth") == null) {
+            throw new RuntimeException("No authentication.");
+        }
+
+        // claim에서 권한 정보 추출
+        Collections authorities =
+                (Collections) Arrays.stream(claims.get("auth").toString().split(","))
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+
+        UserEntity user = new UserEntity();
+        user.setId(claims.getSubject());
+        user.setMemberId((String) claims.get("memberId"));
+        user.setName((String) claims.get("name"));
+        user.setAuthority((List<String>) authorities);
+
+        return new UsernamePasswordAuthenticationToken(user,"", (Collection<? extends GrantedAuthority>) authorities);
     }
 }
