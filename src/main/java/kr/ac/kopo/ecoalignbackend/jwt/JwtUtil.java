@@ -5,10 +5,14 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
+import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.security.PublicKey;
 import java.util.Date;
@@ -31,34 +35,44 @@ public class JwtUtil {
 
     // 1. JWT 생성 : subject로 생성
     // 이메일 인증에 사용
-    public String generateToken(String subject) {
-        return Jwts.builder()
-                .subject(subject)
+    public Token generateToken(String authCode) {
+        String token = Jwts.builder()
+                .subject(authCode)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpTime))
                 .signWith(secretKey)
                 .compact();
+
+        return Token.builder()
+                .grantType("Bearer")
+                .accessToken(token)
+                .build();
     }
 
     // 2. JWT 생성 : DTO로 생성
-    public String createToken(CustomUserInfoDTO customUserInfoDTO) {
+    public Token createToken(UserDTO userDTO) {
         Claims claims = (Claims) Jwts.claims();
-        claims.put("memberId", customUserInfoDTO.getMemberId());
-        claims.put("name", customUserInfoDTO.getName());
-        claims.put("role", customUserInfoDTO.getRole());
+        claims.put("memberId", userDTO.getMemberId());
+        claims.put("name", userDTO.getName());
+        claims.put("role", userDTO.getRole());
 
-        return Jwts.builder()
+        String token = Jwts.builder()
                 .claims(claims)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + accessTokenExpTime))
                 .signWith(secretKey)
                 .compact();
+
+        return Token.builder()
+                .grantType("Bearer")
+                .accessToken(token)
+                .build();
     }
 
     // 3. JWT Claims 추출
     public Claims parseClaims(String token) {
         try {
-            return Jwts.parser().verifyWith((PublicKey) secretKey).build().parseSignedClaims(token).getPayload();
+            return Jwts.parser().verifyWith((SecretKey) secretKey).build().parseSignedClaims(token).getPayload();
         } catch (ExpiredJwtException e){
             return e.getClaims();
         }
@@ -72,7 +86,7 @@ public class JwtUtil {
     // 5. Claims에서 Subject 추출
     public String extractSubject(String token) {
         return Jwts.parser()
-                .verifyWith((PublicKey) secretKey)
+                .verifyWith((SecretKey) secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
@@ -82,7 +96,7 @@ public class JwtUtil {
     // 5. JWT 검증
     public boolean validateToken(String token){
         try {
-            Jwts.parser().verifyWith((PublicKey) secretKey).build().parseSignedClaims(token);
+            Jwts.parser().verifyWith((SecretKey) secretKey).build().parseSignedClaims(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);
@@ -94,5 +108,15 @@ public class JwtUtil {
             log.info("JWT claims string is empty.", e);
         }
         return false;
+    }
+
+    // 6. 요청에서 token 추출
+    public String resolveToken(HttpServletRequest request){
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")){
+            return bearerToken.substring(7);
+        } else {
+            return null;
+        }
     }
 }

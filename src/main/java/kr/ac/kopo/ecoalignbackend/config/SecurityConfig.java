@@ -1,6 +1,6 @@
 package kr.ac.kopo.ecoalignbackend.config;
 
-import kr.ac.kopo.ecoalignbackend.jwt.JwtAuthFilter;
+//import kr.ac.kopo.ecoalignbackend.jwt.JwtAuthFilter;
 import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -30,10 +30,10 @@ public class SecurityConfig {
         // JWT 사용하기 때문에 세션 사용 안함
         http.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         //FormLogin, BasicHttp 비활성화
-        http.formLogin(AbstractHttpConfigurer::disable);
-        http.httpBasic(AbstractHttpConfigurer::disable);
+//        http.formLogin(AbstractHttpConfigurer::disable);
+//        http.httpBasic(AbstractHttpConfigurer::disable);
         //JwtAuthFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
-        http.addFilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
 
 //        http.exceptionHandling((exceptionHandling) -> exceptionHandling
 //                .authenticationEntryPoint(authenticationEntryPoint)

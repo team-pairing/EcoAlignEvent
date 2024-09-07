@@ -27,17 +27,17 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security 사용을 위해 설정
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-	compileOnly 'org.projectlombok:lombok'
 
 	//Jwt
 	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
@@ -50,7 +50,10 @@ dependencies {
 	implementation 'io.github.cdimascio:dotenv-java:3.0.1' // 암호화 키 환경변수로 관리하기 위한 설정
 	implementation 'org.springframework.boot:spring-boot-starter-mail' // 이메일 인증을 위한 설정
 
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
+	runtimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {

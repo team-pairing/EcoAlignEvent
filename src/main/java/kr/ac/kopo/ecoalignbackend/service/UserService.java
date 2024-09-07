@@ -1,58 +1,58 @@
-package kr.ac.kopo.ecoalignbackend.service;
-
-import kr.ac.kopo.ecoalignbackend.dto.*;
-import kr.ac.kopo.ecoalignbackend.entity.User;
-
-import java.util.Optional;
-
-public interface UserService {
-
-    // 회원가입
-    User registerUser();
-
-    // 로그인
-    String logIn();
-
-    // 아이디와 비밀번호로 사용자 찾기
-    Optional<User> findUserByMemberIdAndPassword();
-
-    // 아이디 찾기
-    Optional<User> findMemberIdbyNameAndEmail();
-
-    // 비밀번호 수정할 유저 찾기
-    Optional<User> findPasswordUser();
-
-    // 비밀번호 수정
-
-    // 아이디로 사용자 조회 - 회원정보 수정에 필요
-    Optional<User> findById(String id);
-
-    // 사용자 변경사항 저장 - 회원정보 수정에 필요
-    User saveUser(User user);
-
-    // DTO를 Entity로 변환
-    default User dtoToEntity(UserDTO dto){
-        return User.builder()
-                .id(dto.getId())
-                .memberId(dto.getMemberId())
-                .password(dto.getPassword())
-                .email(dto.getEmail())
-                .name(dto.getName())
-                .birth(dto.getBirth())
-                .gender(dto.getGender())
-                .build();
-    }
-
-    // Entity를 DTO로 변환
-    default UserDTO entityToDto(User entity){
-        return UserDTO.builder()
-                .id(entity.getId())
-                .memberId(entity.getMemberId())
-                .password(entity.getPassword())
-                .email(entity.getEmail())
-                .name(entity.getName())
-                .birth(entity.getBirth())
-                .gender(entity.getGender())
-                .build();
-    }
-}
+//package kr.ac.kopo.ecoalignbackend.service;
+//
+//import kr.ac.kopo.ecoalignbackend.dto.*;
+//import kr.ac.kopo.ecoalignbackend.entity.User;
+//
+//import java.util.Optional;
+//
+//public interface UserService {
+//
+//    // 회원가입
+//    User registerUser();
+//
+//    // 로그인
+//    String logIn();
+//
+//    // 아이디와 비밀번호로 사용자 찾기
+//    Optional<User> findUserByMemberIdAndPassword();
+//
+//    // 아이디 찾기
+//    Optional<User> findMemberIdbyNameAndEmail();
+//
+//    // 비밀번호 수정할 유저 찾기
+//    Optional<User> findPasswordUser();
+//
+//    // 비밀번호 수정
+//
+//    // 아이디로 사용자 조회 - 회원정보 수정에 필요
+//    Optional<User> findById(String id);
+//
+//    // 사용자 변경사항 저장 - 회원정보 수정에 필요
+//    User saveUser(User user);
+//
+//    // DTO를 Entity로 변환
+//    default User dtoToEntity(UserDTO dto){
+//        return User.builder()
+//                .id(dto.getId())
+//                .memberId(dto.getMemberId())
+//                .password(dto.getPassword())
+//                .email(dto.getEmail())
+//                .name(dto.getName())
+//                .birth(dto.getBirth())
+//                .gender(dto.getGender())
+//                .build();
+//    }
+//
+//    // Entity를 DTO로 변환
+//    default UserDTO entityToDto(User entity){
+//        return UserDTO.builder()
+//                .id(entity.getId())
+//                .memberId(entity.getMemberId())
+//                .password(entity.getPassword())
+//                .email(entity.getEmail())
+//                .name(entity.getName())
+//                .birth(entity.getBirth())
+//                .gender(entity.getGender())
+//                .build();
+//    }
+//}
