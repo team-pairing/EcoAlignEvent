@@ -3,13 +3,14 @@ package kr.ac.kopo.ecoalignbackend.service;
 import kr.ac.kopo.ecoalignbackend.dto.*;
 import kr.ac.kopo.ecoalignbackend.entity.UserEntity;
 import kr.ac.kopo.ecoalignbackend.jwt.Token;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface UserService {
+public interface UserService extends UserDetailsService {
 
     // 회원가입
     UserDTO registerUser(Map<String, Object> requestUser);
@@ -37,6 +38,9 @@ public interface UserService {
 
     // 사용자 변경사항 저장 - 회원정보 수정에 필요
     UserEntity saveUser(UserEntity user);
+
+    // 사용자 생성
+    UserEntity createUserEntity(UserEntity userEntity);
 
     // DTO를 Entity로 변환
     default UserEntity dtoToEntity(UserDTO dto){

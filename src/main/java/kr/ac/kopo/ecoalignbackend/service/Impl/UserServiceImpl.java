@@ -9,23 +9,31 @@ import kr.ac.kopo.ecoalignbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final ModelMapper modelMapper;
 
     // 회원가입
     public UserDTO registerUser(Map<String, Object> requestUser){
+        // birth 또는 gender를 입력하지 않았을 경우 default 값으로 설정
+        requestUser.putIfAbsent("birth", "19000101");
+        requestUser.putIfAbsent("gender", "male");
 
         // 입력받은 json 객체로 사용자 생성
         UserDTO userDTO = new UserDTO();
@@ -35,29 +43,22 @@ public class UserServiceImpl implements UserService {
         userDTO.setPassword((String)requestUser.get("password"));
         userDTO.setEmail((String)requestUser.get("email"));
         userDTO.setName((String)requestUser.get("name"));
+        userDTO.setBirth((String)requestUser.get("birth"));
+        userDTO.setGender((String)requestUser.get("gender"));
 
-        if (requestUser.get("birth") != null) {
-            userDTO.setBirth((String)requestUser.get("birth"));
-        } else {
-            userDTO.setBirth("19000101"); // default
-        }
-
-        if (requestUser.get("gender") != null) {
-            userDTO.setGender((String)requestUser.get("gender"));
-        } else {
-            userDTO.setGender("male"); //default
-        }
+        // 권한부여
+        UserEntity entity = dtoToEntity(userDTO);
+        UserEntity user = createUserEntity(entity);
 
         // 비밀번호 암호화
-        userDTO.setAuthority(List.of("USER"));
-        UserEntity entity = dtoToEntity(userDTO);
         String encodedPassword = passwordEncoder.encode(userDTO.getPassword());
-        entity.setPassword(encodedPassword);
+        user.setPassword(encodedPassword);
+
         // 사용자 저장
-        userRepository.save(entity);
+        userRepository.save(user);
 
         // 생성된 사용자 객체 반환
-        return userDTO;
+        return entityToDto(user);
     }
 
     // 아이디를 가진 사용자가 존재하는지 확인
@@ -113,5 +114,28 @@ public class UserServiceImpl implements UserService {
     // 사용자 변경사항 저장 - 회원정보 수정에 필요
     public UserEntity saveUser(UserEntity user){
         return userRepository.save(user);
+    }
+
+    // 사용자 생성
+    public UserEntity createUserEntity(UserEntity userEntity){
+        // 권한 부여
+        Collection<? extends GrantedAuthority> authorities =
+                Collections.singleton(new SimpleGrantedAuthority("USER"));
+
+        List<String> authorityList = authorities.stream()
+                .map(GrantedAuthority::getAuthority) // 각 GrantedAuthority에서 권한 문자열 추출
+                .collect(Collectors.toList());
+
+        userEntity.setAuthority(authorityList);
+
+        return userEntity;
+    }
+
+    // JWT 인증 사용자 찾기
+    @Override
+    public UserEntity loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByMemberId(username)
+                .map(this::createUserEntity)
+                .orElseThrow(() -> new UsernameNotFoundException("해당하는 유저를 찾을 수 없습니다."));
     }
 }
