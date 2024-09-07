@@ -7,6 +7,8 @@ import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
 import kr.ac.kopo.ecoalignbackend.jwt.Token;
 import kr.ac.kopo.ecoalignbackend.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,11 +26,13 @@ public class MailController {
 
     @ResponseBody
     @PostMapping("/send")
-    public String emailSend(@RequestBody MailDTO mailDTO) throws MessagingException {
+    public ResponseEntity<?> emailSend(@RequestBody MailDTO mailDTO) throws MessagingException {
         String authCode = mailService.sendSimpleMessage(mailDTO.getEmail());
         Token token = jwtUtil.generateToken(authCode); // 인증 코드로 JWT 토큰 생성
-        System.out.println("Generated JWT Token: " + token); // JWT 토큰을 출력
-        return authCode; // Response body에 값을 반환
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
+//        System.out.println("Generated JWT Token: " + token); // JWT 토큰을 출력
+        return ResponseEntity.ok().headers(headers).body(authCode); // Response body에 값을 반환
     }
 
     @ResponseBody
