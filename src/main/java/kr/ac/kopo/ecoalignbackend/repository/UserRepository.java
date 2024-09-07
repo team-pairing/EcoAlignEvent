@@ -12,13 +12,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findUserByNameAndEmail(String name, String email);
 
     // 아이디로 사용자 검색
-    Optional<UserEntity> findUserById(String id);
+    UserEntity findUserByMemberId(String memberId);
 
     // 아이디와 이메일로 사용자 검색
     Optional<UserEntity> findUserByIdAndEmail(String id, String email);
-
-    // 아이디와 이메일로 사용자 검색
-    Optional<UserEntity> findUserByMemberIdAndPassword(String memberId, String password);
 
     // 아이디로 회원 탈퇴
     void deleteUserById (String id);

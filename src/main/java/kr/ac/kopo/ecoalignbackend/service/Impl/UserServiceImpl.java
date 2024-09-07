@@ -3,19 +3,20 @@ package kr.ac.kopo.ecoalignbackend.service.Impl;
 import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
 import kr.ac.kopo.ecoalignbackend.entity.UserEntity;
 import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
+import kr.ac.kopo.ecoalignbackend.jwt.Token;
 import kr.ac.kopo.ecoalignbackend.repository.UserRepository;
 import kr.ac.kopo.ecoalignbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-import static java.util.Optional.ofNullable;
-
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -59,9 +60,29 @@ public class UserServiceImpl implements UserService {
         return userDTO;
     }
 
+    // 아이디를 가진 사용자가 존재하는지 확인
+    public Optional<UserEntity> findByMemberId(String memberId){
+        return userRepository.findByMemberId(memberId);
+    }
+
     // 로그인
-    public String logIn(){
-        return null;
+    public Token logIn(String memberId, String password){
+        UserEntity requestUser = userRepository.findUserByMemberId(memberId);
+
+        // 암호화된 비밀번호와 일치하는지 확인
+        String encodedPassword = requestUser.getPassword();
+        // 일치할 경우 권한을 확인하고 없으면 USER 권한 부여
+        if (passwordEncoder.matches(password, encodedPassword)){
+            if (requestUser.getAuthorities().stream().noneMatch(authority -> authority.getAuthority().equals("USER"))){
+                requestUser.setAuthority(List.of("USER"));
+            }
+            // USER 권한이 부여된 토큰 생성
+            return jwtUtil.createToken(entityToDto(requestUser));
+        } else {
+            // 비밀번호가 일치하지 않을 때
+            log.info("Wrong password");
+            return null;
+        }
     }
 
     // 아이디와 비밀번호로 사용자 찾기

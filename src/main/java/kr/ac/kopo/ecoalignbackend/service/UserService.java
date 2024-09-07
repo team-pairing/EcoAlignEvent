@@ -2,6 +2,7 @@ package kr.ac.kopo.ecoalignbackend.service;
 
 import kr.ac.kopo.ecoalignbackend.dto.*;
 import kr.ac.kopo.ecoalignbackend.entity.UserEntity;
+import kr.ac.kopo.ecoalignbackend.jwt.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,11 @@ public interface UserService {
     // 회원가입
     UserDTO registerUser(Map<String, Object> requestUser);
 
+    // 아이디를 가진 사용자가 존재하는지 확인
+    Optional<UserEntity> findByMemberId(String memberId);
+
     // 로그인
-    String logIn();
+    Token logIn(String memberId, String password);
 
     // 아이디와 비밀번호로 사용자 찾기
     Optional<UserEntity> findUserByMemberIdAndPassword();

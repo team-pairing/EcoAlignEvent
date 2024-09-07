@@ -38,8 +38,23 @@ public class UserController {
 
     // 로그인
     @PostMapping("/logIn")
-    public ResponseEntity<?> logIn() {
-        return null;
+    public ResponseEntity<?> logIn(@RequestBody Map<String, Object> requestUser) {
+        String memberId = (String) requestUser.get("memberId");
+        String password = (String) requestUser.get("password");
+        // 아이디를 가진 사용자가 있는지 확인
+        if (userService.findByMemberId(memberId).isPresent()) {
+            // 로그인 진행
+            Token token = userService.logIn(memberId, password);
+            if (token == null){
+                return ResponseEntity.status(404).body("Not Found :: 일치하지 않는 비밀번호");
+            } else {
+                HttpHeaders headers = new HttpHeaders();
+                headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
+                return ResponseEntity.status(200).headers(headers).body("OK :: 로그인 성공!");
+            }
+        } else {
+            return ResponseEntity.status(404).body("Not Found :: 존재하지 않는 아이디");
+        }
     }
 
     // 아이디 찾기
