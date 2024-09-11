@@ -64,9 +64,10 @@ public class UserController {
     public void updatePw(){}
 
     // 회원 정보 수정
-    @PatchMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody Map<String, Object> updates) {
-        UserEntity user = userService.findById(id);
+    @PostMapping("/update")
+    public ResponseEntity<?> updateUser(@RequestBody Map<String, Object> updates) {
+        String memberId = (String) updates.get("memberId");
+        UserEntity user = userService.findUserByMemberId(memberId);
 
         if (user != null) {
             // 각 필드에 대해 업데이트가 필요한지 확인하고 변경

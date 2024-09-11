@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 @Data
 public class UserEntity implements UserDetails {
     @Id
-    private String id;
-
     @Column(name = "member_id", nullable = false)
     @NotNull
     private String memberId;

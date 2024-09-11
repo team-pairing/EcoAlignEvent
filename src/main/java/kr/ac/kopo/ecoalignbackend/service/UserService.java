@@ -18,6 +18,9 @@ public interface UserService extends UserDetailsService {
     // 아이디를 가진 사용자가 존재하는지 확인
     Optional<UserEntity> findByMemberId(String memberId);
 
+    // 아이디를 가진 사용자 찾기
+    UserEntity findUserByMemberId(String memberId);
+
     // 로그인
     Token logIn(String memberId, String password);
 
@@ -33,9 +36,6 @@ public interface UserService extends UserDetailsService {
     // 비밀번호 수정
     void updatePassword();
 
-    // 아이디로 사용자 조회 - 회원정보 수정에 필요
-    UserEntity findById(String id);
-
     // 사용자 변경사항 저장 - 회원정보 수정에 필요
     UserEntity saveUser(UserEntity user);
 
@@ -45,7 +45,6 @@ public interface UserService extends UserDetailsService {
     // DTO를 Entity로 변환
     default UserEntity dtoToEntity(UserDTO dto){
         UserEntity entity = new UserEntity();
-        entity.setId(dto.getId());
         entity.setMemberId(dto.getMemberId());
         entity.setPassword(dto.getPassword());
         entity.setEmail(dto.getEmail());
@@ -59,7 +58,6 @@ public interface UserService extends UserDetailsService {
     // Entity를 DTO로 변환
     default UserDTO entityToDto(UserEntity entity){
         return UserDTO.builder()
-                .id(entity.getId())
                 .memberId(entity.getMemberId())
                 .password(entity.getPassword())
                 .email(entity.getEmail())

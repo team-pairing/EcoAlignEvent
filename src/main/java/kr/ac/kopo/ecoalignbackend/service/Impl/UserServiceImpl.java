@@ -38,8 +38,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         // 입력받은 json 객체로 사용자 생성
         UserDTO userDTO = new UserDTO();
-        String id = userDTO.idSetting();
-        userDTO.setId(id);
         userDTO.setMemberId((String)requestUser.get("memberId"));
         userDTO.setPassword((String)requestUser.get("password"));
         userDTO.setEmail((String)requestUser.get("email"));
@@ -65,6 +63,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     // 아이디를 가진 사용자가 존재하는지 확인
     public Optional<UserEntity> findByMemberId(String memberId){
         return userRepository.findByMemberId(memberId);
+    }
+
+    // 아이디를 가진 사용자 찾기
+    public UserEntity findUserByMemberId(String memberId) {
+        return userRepository.findUserByMemberId(memberId);
     }
 
     // 로그인
@@ -104,12 +107,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // 비밀번호 수정
     public void updatePassword(){
-    }
-
-    // 아이디로 사용자 조회 - 회원정보 수정에 필요
-    public UserEntity findById(String id){
-        Optional<UserEntity> user = userRepository.findByMemberId(id);
-        return user.orElse(null);
     }
 
     // 사용자 변경사항 저장 - 회원정보 수정에 필요

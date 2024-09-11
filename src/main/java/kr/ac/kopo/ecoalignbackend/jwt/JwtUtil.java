@@ -63,8 +63,7 @@ public class JwtUtil {
     public Token createToken(UserDTO userDTO) {
         // JWT 토큰 생성
         String token = Jwts.builder()
-                .subject(userDTO.getId())
-                .claim("memberId", userDTO.getMemberId())
+                .subject(userDTO.getMemberId())
                 .claim("name", userDTO.getName())
                 .claim("auth", userDTO.getAuthority())
                 .issuedAt(new Date())
@@ -146,8 +145,7 @@ public class JwtUtil {
                         .collect(Collectors.toList());
 
         UserEntity user = new UserEntity();
-        user.setId(claims.getSubject());
-        user.setMemberId((String) claims.get("memberId"));
+        user.setMemberId(claims.getSubject());
         user.setName((String) claims.get("name"));
         user.setAuthority((List<String>) authorities);
 
