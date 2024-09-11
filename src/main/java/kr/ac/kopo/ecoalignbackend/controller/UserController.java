@@ -23,6 +23,19 @@ public class UserController {
     }
 
 
+    // 아이디 중복 확인
+    public ResponseEntity<?> checkId(@RequestBody Map<String, Object> requestId) {
+        String memberId = (String) requestId.get("memberId");
+        Optional<UserEntity> result = userService.findByMemberId(memberId);
+        if (result.isEmpty()){
+            Map<String, String> resultBody = null;
+            resultBody.put("message", "available");
+            return ResponseEntity.status(200).body(resultBody);
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     // 회원가입
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody Map<String, Object> requestUser) {
@@ -34,7 +47,17 @@ public class UserController {
     }
 
     // 회원탈퇴
-    public void signOut(){}
+    @PostMapping("/signOut")
+    public ResponseEntity<?> signOut(@RequestBody Map<String, Object> requestUser){
+        String memberId = (String) requestUser.get("memberId");
+        String password = (String) requestUser.get("password");
+        boolean result = userService.deleteUserEntity(memberId, password);
+        if (result) {
+            return ResponseEntity.status(200).build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
     // 로그인
     @PostMapping("/logIn")

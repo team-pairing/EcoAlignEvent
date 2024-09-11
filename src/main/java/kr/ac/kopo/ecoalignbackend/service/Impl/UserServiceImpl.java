@@ -129,6 +129,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userEntity;
     }
 
+    // 사용자 삭제
+    public boolean deleteUserEntity(String memberId, String password){
+        return userRepository.deleteUserEntityByMemberIdAndPassword(memberId, password);
+    }
+
     // JWT 인증 사용자 찾기
     @Override
     public UserEntity loadUserByUsername(String username) throws UsernameNotFoundException {

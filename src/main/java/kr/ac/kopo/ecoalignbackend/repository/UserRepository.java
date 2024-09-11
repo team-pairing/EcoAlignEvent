@@ -17,4 +17,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     // 아이디(memberId)로 사용자 검색
     // 로그인에 사용
     Optional<UserEntity> findByMemberId(String memberId);
+
+    // 아이디랑 비밀번호로 사용자 삭제
+    boolean deleteUserEntityByMemberIdAndPassword(String memberId, String password);
 }
