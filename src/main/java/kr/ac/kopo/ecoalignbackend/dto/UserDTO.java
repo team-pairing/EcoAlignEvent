@@ -3,7 +3,6 @@ package kr.ac.kopo.ecoalignbackend.dto;
 import lombok.*;
 
 import java.util.List;
-import java.util.Random;
 
 @Data
 @Builder

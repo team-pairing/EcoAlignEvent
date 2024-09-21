@@ -2,7 +2,6 @@ package kr.ac.kopo.ecoalignbackend.jwt;
 
 
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.impl.DefaultClaimsBuilder;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;

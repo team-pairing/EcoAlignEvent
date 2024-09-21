@@ -5,8 +5,6 @@ import kr.ac.kopo.ecoalignbackend.entity.UserEntity;
 import kr.ac.kopo.ecoalignbackend.jwt.Token;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 

@@ -1,11 +1,8 @@
 package kr.ac.kopo.ecoalignbackend.config;
 
 //import kr.ac.kopo.ecoalignbackend.jwt.JwtAuthFilter;
-import io.jsonwebtoken.ClaimsBuilder;
 import kr.ac.kopo.ecoalignbackend.jwt.JwtAuthFilter;
 import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
-import kr.ac.kopo.ecoalignbackend.service.UserService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
