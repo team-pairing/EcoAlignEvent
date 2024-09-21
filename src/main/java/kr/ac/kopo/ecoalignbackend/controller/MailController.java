@@ -31,16 +31,21 @@ public class MailController {
     @ResponseBody
     @PostMapping("/send")
     public ResponseEntity<?> emailSend(@RequestBody MailDTO mailDTO) throws MessagingException {
-        if (mailDTO.getEmail() == null) {
+
+        if (mailDTO.getEmail() == null || mailDTO.getEmail().isEmpty()) {
             return ResponseEntity.badRequest().build(); // 사용자가 입력 없이 요청한 경우
+
         } else {
             String authCode = mailService.sendSimpleMessage(mailDTO.getEmail());
-            if (authCode == null) {
+
+            if (authCode == null || authCode.isEmpty()) {
                 return ResponseEntity.internalServerError().build(); // 이메일 전송 실패 시
+
             } else {
                 Token token = jwtUtil.generateToken(authCode); // 인증 코드로 JWT 토큰 생성
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
+
                 return ResponseEntity.ok().headers(headers).build(); // 이메일 전송 성공 시
             }
         }
@@ -51,12 +56,16 @@ public class MailController {
     @PostMapping("/check")
     public ResponseEntity<?> emailCheck(@RequestBody CodeDTO dto, @RequestHeader("Authorization") String token) {
         String authCode = jwtUtil.extractSubject(token); // 헤더에 포함되어있는 토큰에서 인증 코드를 추출
-        if (authCode != null && dto.getCheckNumber() != null){
+
+        if (authCode != null && !authCode.isEmpty() && dto.getCheckNumber() != null && !dto.getCheckNumber().isEmpty()){
+
             if (authCode.equals(dto.getCheckNumber())) {
                 return ResponseEntity.ok().build(); // 인증에 성공했을 때
+
             } else {
                 return ResponseEntity.notFound().build(); // 인증에 실패한 경우
             }
+
         } else {
             return ResponseEntity.badRequest().build(); // 입력이 빈 경우
         }

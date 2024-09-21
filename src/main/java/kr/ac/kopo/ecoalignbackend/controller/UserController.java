@@ -27,7 +27,7 @@ public class UserController {
     @PostMapping("/checkId")
     public ResponseEntity<?> checkId(@RequestBody Map<String, Object> requestId) {
         String memberId = (String) requestId.get("memberId");
-        if (memberId == null) { // 사용자가 입력 없이 요청한 경우
+        if (memberId == null || memberId.isEmpty()) { // 사용자가 입력 없이 요청한 경우
             return ResponseEntity.badRequest().build();
         } else {
             Optional<UserEntity> result = userService.findByMemberId(memberId);
@@ -42,11 +42,26 @@ public class UserController {
     // 회원가입 - 회원정보 저장
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody Map<String, Object> requestUser) {
-        UserDTO registeredUser = userService.registerUser(requestUser);
-        Token token = jwtUtil.createToken(registeredUser); // 인증 코드로 JWT 토큰 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
-        return ResponseEntity.ok().headers(headers).body(registeredUser); // Response body에 값을 반환
+        String memberId = (String) requestUser.get("memberId");
+        String password = (String) requestUser.get("password");
+        String email = (String) requestUser.get("email");
+        String name = (String) requestUser.get("name");
+
+        if (memberId != null && !memberId.isEmpty() &&
+                password != null && !password.isEmpty() &&
+                email != null && !email.isEmpty() &&
+                name != null && !name.isEmpty()) {
+
+            UserDTO registeredUser = userService.registerUser(requestUser);
+            Token token = jwtUtil.createToken(registeredUser); // 인증 코드로 JWT 토큰 생성
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
+
+            return ResponseEntity.ok().headers(headers).build(); // Response body에 값을 반환
+
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     // 회원탈퇴
