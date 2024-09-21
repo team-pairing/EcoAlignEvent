@@ -2,6 +2,7 @@ package kr.ac.kopo.ecoalignbackend.service.Impl;
 
 import kr.ac.kopo.ecoalignbackend.entity.GroupEntity;
 import kr.ac.kopo.ecoalignbackend.repository.GroupRepository;
+import kr.ac.kopo.ecoalignbackend.repository.ScheduleRepository;
 import kr.ac.kopo.ecoalignbackend.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class GroupServiceImpl implements GroupService {
     private final GroupRepository groupRepository;
+    private final ScheduleRepository scheduleRepository;
 
     // 그룹 추가
     public void addGroup(String groupItem) {
@@ -27,6 +29,7 @@ public class GroupServiceImpl implements GroupService {
         Optional<GroupEntity> group = groupRepository.findById(id);
 
         if (group.isPresent() && group.get().getGroupItem().equals(groupItem)) {
+            scheduleRepository.deleteAllByKind(groupItem); // 해당 그룹에 속해있는 일정들 삭제
             groupRepository.delete(group.get());
             return true;
         }
