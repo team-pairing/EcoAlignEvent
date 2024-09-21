@@ -89,24 +89,27 @@ public class UserController {
         String memberId = (String) requestUser.get("memberId");
         String password = (String) requestUser.get("password");
 
-        // 아이디를 가진 사용자가 있는지 확인
-        if (userService.findByMemberId(memberId).isPresent()) {
-            // 로그인 진행
-            Token token = userService.logIn(memberId, password);
-            if (token == null){
-                return ResponseEntity.badRequest().build(); // 비밀번호가 일치하지 않을 때
-            } else {
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
-                UserEntity userEntity= userService.findUserByMemberId(memberId);
-                Map<String, String> resultBody = new HashMap<>();
-                resultBody.put("name", userEntity.getName());
-                resultBody.put("memberId", memberId);
-                resultBody.put("password", password);
-                return ResponseEntity.status(200).headers(headers).body(resultBody);
-            }
+        if (memberId == null || memberId.isEmpty() || password == null || password.isEmpty()) {
+            return ResponseEntity.badRequest().build(); // 사용자의 입력 값이 비었을 때
+
         } else {
-            return ResponseEntity.badRequest().build(); // 아이디가 존재하지 않을 때
+            // 아이디를 가진 사용자가 있는지 확인
+            if (userService.findByMemberId(memberId).isPresent()) {
+                // 로그인 진행
+                Token token = userService.logIn(memberId, password);
+                if (token == null) {
+                    return ResponseEntity.notFound().build(); // 비밀번호가 일치하지 않을 때
+                } else {
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
+                    UserEntity userEntity = userService.findUserByMemberId(memberId);
+                    Map<String, String> resultBody = new HashMap<>();
+                    resultBody.put("name", userEntity.getName());
+                    return ResponseEntity.ok().headers(headers).body(resultBody);
+                }
+            } else {
+                return ResponseEntity.unprocessableEntity().build(); // 아이디가 존재하지 않을 때
+            }
         }
     }
 
