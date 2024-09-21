@@ -201,8 +201,11 @@ public class UserController {
         }
     }
 
-    // 비밀번호 재설정
-    public void updatePw(){}
+//    // 비밀번호 재설정
+//    @PostMapping("/findPw/updatePw")
+//    public ResponseEntity<?> updatePw(@RequestBody Map<String, Object> updatedPassword){
+//
+//    }
 
     // 회원 정보 수정
     @PostMapping("/update")
