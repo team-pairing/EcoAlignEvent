@@ -24,14 +24,11 @@ public interface UserService extends UserDetailsService {
     // 로그인
     Token logIn(String memberId, String password);
 
-    // 아이디와 비밀번호로 사용자 찾기
-    Optional<UserEntity> findUserByMemberIdAndPassword();
-
      // 아이디 찾기
     String findMemberIdByNameAndEmailAndBirth(String name, String email, String birth);
 
     // 비밀번호 수정할 유저 찾기
-    Optional<UserEntity> findPasswordUser();
+    Optional<UserEntity> findPasswordUser(String memberId, String email);
 
     // 비밀번호 수정
     void updatePassword();

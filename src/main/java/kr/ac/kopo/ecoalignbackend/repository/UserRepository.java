@@ -20,6 +20,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     // 아이디로 사용자 유무 확인
     Optional<UserEntity> findByMemberId(String memberId);
 
+    // 아이디와 이메일로 사용자 검색
+    UserEntity findUserBymemberIdAndEmail(String memberId,String email);
+
+    // 아이디와 이메일로 사용자 유무 확인
+    Optional<UserEntity> findBymemberIdAndEmail(String memberId,String email);
+
     // 아이디랑 비밀번호로 사용자 삭제
     boolean deleteUserEntityByMemberIdAndPassword(String memberId, String password);
 }

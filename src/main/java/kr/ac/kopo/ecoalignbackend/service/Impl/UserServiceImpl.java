@@ -90,11 +90,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
-    // 아이디와 비밀번호로 사용자 찾기
-    public Optional<UserEntity> findUserByMemberIdAndPassword(){
-        return null;
-    }
-
     // 아이디 찾기
     public String findMemberIdByNameAndEmailAndBirth(String name, String email, String birth){
         if (userRepository.findByNameAndEmailAndBirth(name, email, birth).isPresent()) {
@@ -106,8 +101,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     // 비밀번호 수정할 유저 찾기
-    public Optional<UserEntity> findPasswordUser(){
-        return null;
+    public Optional<UserEntity> findPasswordUser(String memberId, String email){
+        return userRepository.findBymemberIdAndEmail(memberId, email);
     }
 
     // 비밀번호 수정
