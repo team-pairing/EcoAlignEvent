@@ -28,3 +28,4 @@
 - group repository, group service, group service impl, group controller 작성
 - 그룹 추가, 그룹 삭제, 그룹 조회 임시완료
 - schedule entity, schedule dto, schedule repository, schedule service, schedule service impl, schedule controller 작성
+- 일정 추가, 일정 수정, 일정 삭제, 일정 조회 임시완료
