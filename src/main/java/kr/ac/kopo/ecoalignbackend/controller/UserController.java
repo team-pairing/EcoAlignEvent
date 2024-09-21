@@ -27,13 +27,15 @@ public class UserController {
     @PostMapping("/checkId")
     public ResponseEntity<?> checkId(@RequestBody Map<String, Object> requestId) {
         String memberId = (String) requestId.get("memberId");
-        Optional<UserEntity> result = userService.findByMemberId(memberId);
-        if (result.isEmpty()){
-            Map<String, String> resultBody = new HashMap<>();
-            resultBody.put("message", "available");
-            return ResponseEntity.status(200).body(resultBody);
-        } else {
+        if (memberId == null) { // 사용자가 입력 없이 요청한 경우
             return ResponseEntity.badRequest().build();
+        } else {
+            Optional<UserEntity> result = userService.findByMemberId(memberId);
+            if (result.isEmpty()) { // 아이디가 데이터베이스에 없는 경우
+                return ResponseEntity.accepted().build();
+            } else { // 아이디가 데이터베이스에 존재하는 경우
+                return ResponseEntity.badRequest().build();
+            }
         }
     }
 
@@ -101,7 +103,6 @@ public class UserController {
             return ResponseEntity.status(200).body(requestUser);
         }
     }
-
     // 비밀번호 수정
     public void updatePw(){}
 
