@@ -1,7 +1,6 @@
 package kr.ac.kopo.ecoalignbackend.controller;
 
 import jakarta.mail.MessagingException;
-import kr.ac.kopo.ecoalignbackend.dto.CodeDTO;
 import kr.ac.kopo.ecoalignbackend.dto.MailDTO;
 import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
 import kr.ac.kopo.ecoalignbackend.jwt.Token;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -54,12 +52,14 @@ public class MailController {
     // 이메일 인증
     @ResponseBody
     @PostMapping("/check")
-    public ResponseEntity<?> emailCheck(@RequestBody CodeDTO dto, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> emailCheck(@RequestBody Map<String, Object> code, @RequestHeader("Authorization") String token) {
         String authCode = jwtUtil.extractSubject(token); // 헤더에 포함되어있는 토큰에서 인증 코드를 추출
+        String checkNumber = (String) code.get("checkNumber");
 
-        if (authCode != null && !authCode.isEmpty() && dto.getCheckNumber() != null && !dto.getCheckNumber().isEmpty()){
+        if (authCode != null && !authCode.isEmpty() &&
+                checkNumber != null && !checkNumber.isEmpty()){
 
-            if (authCode.equals(dto.getCheckNumber())) {
+            if (authCode.equals(checkNumber)) {
                 return ResponseEntity.ok().build(); // 인증에 성공했을 때
 
             } else {

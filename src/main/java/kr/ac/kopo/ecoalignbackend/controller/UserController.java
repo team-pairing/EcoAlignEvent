@@ -149,6 +149,7 @@ public class UserController {
     // 비밀번호 찾기
 
     // 사용자 이메일 인증코드 전송
+    @PostMapping("/findPw/sendCode")
     public ResponseEntity<?> sendCode(@RequestBody Map<String, Object> requestUser) throws MessagingException {
         String memberId = (String) requestUser.get("memberId");
         String email = (String) requestUser.get("email");
@@ -180,6 +181,25 @@ public class UserController {
     }
 
     // 사용자 이메일 인증
+    @PostMapping("/findPw/checkCode")
+    public ResponseEntity<?> checkCode(@RequestBody Map<String, Object> code, @RequestHeader("Authorization") String token) {
+        String authCode = jwtUtil.extractSubject(token); // 헤더에 포함되어있는 토큰에서 인증 코드를 추출
+        String checkNumber = (String) code.get("checkNumber");
+
+        if (authCode != null && !authCode.isEmpty() &&
+                checkNumber != null && !checkNumber.isEmpty()){
+
+            if (authCode.equals(checkNumber)) {
+                return ResponseEntity.ok().build(); // 인증에 성공했을 때
+
+            } else {
+                return ResponseEntity.notFound().build(); // 인증에 실패한 경우
+            }
+
+        } else {
+            return ResponseEntity.badRequest().build(); // 입력이 빈 경우
+        }
+    }
 
     // 비밀번호 재설정
     public void updatePw(){}
