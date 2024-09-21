@@ -27,3 +27,4 @@
 - group entity, dto 작성
 - group repository, group service, group service impl, group controller 작성
 - 그룹 추가, 그룹 삭제, 그룹 조회 임시완료
+- schedule entity, schedule dto, schedule repository, schedule service, schedule service impl, schedule controller 작성
