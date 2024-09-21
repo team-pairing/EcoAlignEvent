@@ -57,10 +57,10 @@ public class UserController {
             HttpHeaders headers = new HttpHeaders();
             headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
 
-            return ResponseEntity.ok().headers(headers).build(); // Response body에 값을 반환
+            return ResponseEntity.ok().headers(headers).build(); // 회원가입에 성공한 경우
 
         } else {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build(); // 사용자의 요청 값이 비어있는 경우
         }
     }
 
