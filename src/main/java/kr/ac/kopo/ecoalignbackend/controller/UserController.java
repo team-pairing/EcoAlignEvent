@@ -70,7 +70,8 @@ public class UserController {
         String memberId = (String) requestUser.get("memberId");
         String password = (String) requestUser.get("password");
 
-        if (memberId == null || memberId.isEmpty() || password == null || password.isEmpty()){ // 사용자 입력이 올바르지 않은 경우
+        if (memberId == null || memberId.isEmpty() ||
+                password == null || password.isEmpty()){ // 사용자 입력이 올바르지 않은 경우
             return ResponseEntity.badRequest().build();
 
         } else {
@@ -89,7 +90,8 @@ public class UserController {
         String memberId = (String) requestUser.get("memberId");
         String password = (String) requestUser.get("password");
 
-        if (memberId == null || memberId.isEmpty() || password == null || password.isEmpty()) {
+        if (memberId == null || memberId.isEmpty() ||
+                password == null || password.isEmpty()) {
             return ResponseEntity.badRequest().build(); // 사용자의 입력 값이 비었을 때
 
         } else {
@@ -119,12 +121,23 @@ public class UserController {
         String name = (String) requestUser.get("name");
         String email = (String) requestUser.get("email");
         String birth = (String) requestUser.get("birth");
-        String memberId = userService.findMemberIdByNameAndEmailAndBirth(name, email, birth);
-        if (memberId == null) {
-            return ResponseEntity.badRequest().build();
+
+        if (name == null || name.isEmpty() ||
+                email == null || email.isEmpty() ||
+                birth == null || birth.isEmpty()) {
+
+            return ResponseEntity.badRequest().build(); // 사용자 입력이 비어있는 경우
+
         } else {
-            requestUser.put("memberId", memberId);
-            return ResponseEntity.status(200).body(requestUser);
+
+            String memberId = userService.findMemberIdByNameAndEmailAndBirth(name, email, birth);
+            if (memberId == null) {
+                return ResponseEntity.notFound().build(); // 회원이 아닌 경우
+
+            } else {
+                requestUser.put("memberId", memberId);
+                return ResponseEntity.status(200).body(requestUser); // 아이디를 성공적으로 찾은 경우
+            }
         }
     }
     // 비밀번호 수정
