@@ -136,7 +136,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // 사용자 삭제
     public boolean deleteUserEntity(String memberId, String password){
-        return userRepository.deleteUserEntityByMemberIdAndPassword(memberId, password);
+        UserEntity requestUser = userRepository.findUserByMemberId(memberId);
+
+        // 암호화된 비밀번호와 일치하는지 확인
+        String encodedPassword = requestUser.getPassword();
+        if (passwordEncoder.matches(password, encodedPassword)){
+            return userRepository.deleteUserEntityByMemberIdAndPassword(memberId, password);
+
+        } else {
+            return false;
+        }
     }
 
     // JWT 인증 사용자 찾기
