@@ -58,7 +58,7 @@ public class MailService {
             javaMailSender.send(message); // 메일 발송
         } catch (MailException e) {
             e.printStackTrace();
-            throw new IllegalArgumentException("메일 발송 중 오류가 발생했습니다.");
+            return null;
         }
 
         return number; // 생성된 인증번호 반환

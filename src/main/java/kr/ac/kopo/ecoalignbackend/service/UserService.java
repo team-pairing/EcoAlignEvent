@@ -28,7 +28,7 @@ public interface UserService extends UserDetailsService {
     Optional<UserEntity> findUserByMemberIdAndPassword();
 
      // 아이디 찾기
-    Optional<UserEntity> findMemberIdbyNameAndEmail();
+    String findMemberIdByNameAndEmailAndBirth(String name, String email, String birth);
 
     // 비밀번호 수정할 유저 찾기
     Optional<UserEntity> findPasswordUser();

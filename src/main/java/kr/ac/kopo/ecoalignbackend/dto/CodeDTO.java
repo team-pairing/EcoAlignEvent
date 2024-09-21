@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CodeDTO {
-    private String code;
+    private String checkNumber;
 }

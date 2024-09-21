@@ -8,14 +8,16 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    // 이름과 이메일로 사용자 검색
-    Optional<UserEntity> findUserByNameAndEmail(String name, String email);
+    // 이름과 이메일, 생년월일로 사용자 검색
+    UserEntity findUserByNameAndEmailAndBirth(String name, String email, String birth);
+
+    // 이름과 이메일, 생년월일로 사용자 유무 확인
+    Optional<UserEntity> findByNameAndEmailAndBirth(String name, String email, String birth);
 
     // 아이디로 사용자 검색
     UserEntity findUserByMemberId(String memberId);
 
-    // 아이디(memberId)로 사용자 검색
-    // 로그인에 사용
+    // 아이디로 사용자 유무 확인
     Optional<UserEntity> findByMemberId(String memberId);
 
     // 아이디랑 비밀번호로 사용자 삭제

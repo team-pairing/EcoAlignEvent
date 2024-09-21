@@ -24,11 +24,12 @@ public class UserController {
 
 
     // 아이디 중복 확인
+    @PostMapping("/checkId")
     public ResponseEntity<?> checkId(@RequestBody Map<String, Object> requestId) {
         String memberId = (String) requestId.get("memberId");
         Optional<UserEntity> result = userService.findByMemberId(memberId);
         if (result.isEmpty()){
-            Map<String, String> resultBody = null;
+            Map<String, String> resultBody = new HashMap<>();
             resultBody.put("message", "available");
             return ResponseEntity.status(200).body(resultBody);
         } else {
@@ -36,7 +37,7 @@ public class UserController {
         }
     }
 
-    // 회원가입
+    // 회원가입 - 회원정보 저장
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody Map<String, Object> requestUser) {
         UserDTO registeredUser = userService.registerUser(requestUser);
@@ -53,9 +54,9 @@ public class UserController {
         String password = (String) requestUser.get("password");
         boolean result = userService.deleteUserEntity(memberId, password);
         if (result) {
-            return ResponseEntity.status(200).build();
+            return ResponseEntity.status(200).body(requestUser);
         } else {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(requestUser);
         }
     }
 
@@ -64,24 +65,42 @@ public class UserController {
     public ResponseEntity<?> logIn(@RequestBody Map<String, Object> requestUser) {
         String memberId = (String) requestUser.get("memberId");
         String password = (String) requestUser.get("password");
+
         // 아이디를 가진 사용자가 있는지 확인
         if (userService.findByMemberId(memberId).isPresent()) {
             // 로그인 진행
             Token token = userService.logIn(memberId, password);
             if (token == null){
-                return ResponseEntity.status(404).body("Not Found :: 일치하지 않는 비밀번호");
+                return ResponseEntity.badRequest().build(); // 비밀번호가 일치하지 않을 때
             } else {
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
-                return ResponseEntity.status(200).headers(headers).body("OK :: 로그인 성공!");
+                UserEntity userEntity= userService.findUserByMemberId(memberId);
+                Map<String, String> resultBody = new HashMap<>();
+                resultBody.put("name", userEntity.getName());
+                resultBody.put("memberId", memberId);
+                resultBody.put("password", password);
+                return ResponseEntity.status(200).headers(headers).body(resultBody);
             }
         } else {
-            return ResponseEntity.status(404).body("Not Found :: 존재하지 않는 아이디");
+            return ResponseEntity.badRequest().build(); // 아이디가 존재하지 않을 때
         }
     }
 
     // 아이디 찾기
-    public void findId(){}
+    @GetMapping("/findId")
+    public ResponseEntity<?> findId(@RequestBody Map<String, Object> requestUser){
+        String name = (String) requestUser.get("name");
+        String email = (String) requestUser.get("email");
+        String birth = (String) requestUser.get("birth");
+        String memberId = userService.findMemberIdByNameAndEmailAndBirth(name, email, birth);
+        if (memberId == null) {
+            return ResponseEntity.badRequest().build();
+        } else {
+            requestUser.put("memberId", memberId);
+            return ResponseEntity.status(200).body(requestUser);
+        }
+    }
 
     // 비밀번호 수정
     public void updatePw(){}

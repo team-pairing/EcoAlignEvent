@@ -96,8 +96,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     // 아이디 찾기
-    public Optional<UserEntity> findMemberIdbyNameAndEmail(){
-        return null;
+    public String findMemberIdByNameAndEmailAndBirth(String name, String email, String birth){
+        if (userRepository.findByNameAndEmailAndBirth(name, email, birth).isPresent()) {
+            UserEntity user = userRepository.findUserByNameAndEmailAndBirth(name, email, birth);
+            return user.getMemberId();
+        } else {
+            return null;
+        }
     }
 
     // 비밀번호 수정할 유저 찾기

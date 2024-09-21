@@ -11,6 +11,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/email")
 public class MailController {
@@ -24,22 +27,38 @@ public class MailController {
         this.jwtUtil = jwtUtil;
     }
 
+    // 이메일 인증번호 전송
     @ResponseBody
     @PostMapping("/send")
     public ResponseEntity<?> emailSend(@RequestBody MailDTO mailDTO) throws MessagingException {
         String authCode = mailService.sendSimpleMessage(mailDTO.getEmail());
-        Token token = jwtUtil.generateToken(authCode); // 인증 코드로 JWT 토큰 생성
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
-        return ResponseEntity.ok().headers(headers).body(authCode); // Response body에 값을 반환
+        if (authCode == null) {
+            return ResponseEntity.badRequest().build(); // 실패 시 bad request
+        }
+        else {
+            Token token = jwtUtil.generateToken(authCode); // 인증 코드로 JWT 토큰 생성
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
+            Map<String, String> resultBody = new HashMap<>();
+            resultBody.put("check_number", authCode);
+            return ResponseEntity.status(200).headers(headers).body(resultBody); // Response body에 값을 반환
+        }
     }
 
+    // 이메일 인증
     @ResponseBody
     @PostMapping("/check")
-    public boolean emailCheck(@RequestBody CodeDTO dto, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> emailCheck(@RequestBody CodeDTO dto, @RequestHeader("Authorization") String token) {
         String authCode = jwtUtil.extractSubject(token); // 헤더에 포함되어있는 토큰에서 인증 코드를 추출
-        return authCode != null && authCode.equals(dto.getCode());
-        // authCode와 사용자가 입력한 code 비교 - 일치하면 true, 불일치하면 false
+        if (authCode != null && dto.getCheckNumber() != null){
+            if (authCode.equals(dto.getCheckNumber())) {
+                return ResponseEntity.status(200).build(); // 인증에 성공했을 때
+            } else {
+                return ResponseEntity.badRequest().build(); // 인증에 실패한 경우
+            }
+        } else {
+            return ResponseEntity.noContent().build(); // 입력이 빈 경우
+        }
     }
 }
 
