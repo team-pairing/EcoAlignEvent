@@ -103,7 +103,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     // 비밀번호 수정
-    public void updatePassword(){
+    public int updatePassword(String memberId, String password){
+        UserEntity user = userRepository.findUserByMemberId(memberId);
+
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(password);
+        user.setPassword(encodedPassword);
+
+        // 사용자 저장
+        userRepository.save(user);
+
+        if (user.getPassword().equals(encodedPassword)) {
+            return 1;
+        } else return 0;
     }
 
     // 사용자 변경사항 저장 - 회원정보 수정에 필요

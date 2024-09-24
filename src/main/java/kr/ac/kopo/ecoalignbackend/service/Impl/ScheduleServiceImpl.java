@@ -50,9 +50,9 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     // 일정 삭제
-    public void deleteSchedule(ScheduleDTO scheduleDTO){
-        if (scheduleRepository.findScheduleEntityById(scheduleDTO.getId()).isPresent()) {
-            ScheduleEntity schedule = scheduleRepository.findScheduleEntityById(scheduleDTO.getId()).get();
+    public void deleteSchedule(String scheduleId){
+        if (scheduleRepository.findScheduleEntityById(scheduleId).isPresent()) {
+            ScheduleEntity schedule = scheduleRepository.findScheduleEntityById(scheduleId).get();
             scheduleRepository.delete(schedule);
         }
     }

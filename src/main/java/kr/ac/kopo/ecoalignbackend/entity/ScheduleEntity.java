@@ -19,25 +19,31 @@ public class ScheduleEntity {
     @NotNull
     private String id;
 
-    @Column
+    @Column (nullable = false)
+    @NotNull
     private String color;
 
     @Column
     private String details;
 
-    @Column
+    @Column (nullable = false)
+    @NotNull
     private String end;
 
-    @Column
+    @Column (nullable = false)
+    @NotNull
     private String kind;
 
-    @Column
+    @Column (nullable = false)
+    @NotNull
     private String name;
 
-    @Column
+    @Column (nullable = false)
+    @NotNull
     private String start;
 
-    @Column
+    @Column (nullable = false)
+    @NotNull
     private boolean timed;
 
 

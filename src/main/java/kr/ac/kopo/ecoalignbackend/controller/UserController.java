@@ -201,11 +201,24 @@ public class UserController {
         }
     }
 
-//    // 비밀번호 재설정
-//    @PostMapping("/findPw/updatePw")
-//    public ResponseEntity<?> updatePw(@RequestBody Map<String, Object> updatedPassword){
-//
-//    }
+    // 비밀번호 재설정
+    @PostMapping("/findPw/updatePw")
+    public ResponseEntity<?> updatePw(@RequestBody Map<String, Object> request){
+        String memberId = (String) request.get("memberId");
+        String password = (String) request.get("password");
+
+        if (memberId == null || memberId.isEmpty() ||
+                password == null || password.isEmpty()) {
+            return ResponseEntity.badRequest().build(); // 입력이 빈 경우
+        } else {
+            int result = userService.updatePassword(memberId, password);
+            if (result == 0) {
+                return ResponseEntity.internalServerError().build(); // 수정에 실패한 경우
+            } else {
+                return ResponseEntity.ok().build(); // 수정에 성공한 경우
+            }
+        }
+    }
 
     // 회원 정보 수정
     @PostMapping("/update")

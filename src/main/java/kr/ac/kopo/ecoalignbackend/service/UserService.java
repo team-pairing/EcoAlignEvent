@@ -29,7 +29,7 @@ public interface UserService extends UserDetailsService {
     Optional<UserEntity> findPasswordUser(String memberId, String email);
 
     // 비밀번호 수정
-    void updatePassword();
+    int updatePassword(String memberId, String password);
 
     // 사용자 변경사항 저장 - 회원정보 수정에 필요
     UserEntity saveUser(UserEntity user);

@@ -15,7 +15,7 @@ public interface ScheduleService {
     void updateSchedule(ScheduleDTO scheduleDTO);
 
     // 일정 삭제
-    void deleteSchedule(ScheduleDTO scheduleDTO);
+    void deleteSchedule(String scheduleId);
 
     // 일정 조회
     List<ScheduleEntity> allSchedule();
