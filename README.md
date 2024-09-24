@@ -39,3 +39,5 @@
 - 회원 탈퇴 시 비밀번호가 틀린 경우, 아이디가 없는 경우 등 추가해서 response 처리
 - 일정 추가, 일정 수정, 일정 삭제, 일정 조회 시 토큰 만료로 인한 에러 처리 - response 처리
 - 그룹 추가, 그룹 삭제, 그룹 조회 시 토큰 만료로 인한 에러 처리 - response 처리
+- memo entity, memo dto, memo repository, memo service, memo service impl, memo controller 작성
+- 일정 수정 메소드 수정, 메모 추가, 메모 수정, 메모 삭제, 메모 조회 임시완료

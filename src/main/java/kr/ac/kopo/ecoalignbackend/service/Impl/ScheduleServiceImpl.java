@@ -40,13 +40,13 @@ public class ScheduleServiceImpl implements ScheduleService {
 
             ScheduleEntity schedule = scheduleRepository.findScheduleEntityById(scheduleDTO.getId()).get();
 
-            if (!schedule.getColor().equals(scheduleDTO.getColor())) schedule.setColor(schedule.getColor());
-            if (!schedule.getDetails().equals(scheduleDTO.getDetails())) schedule.setDetails(schedule.getDetails());
-            if (!schedule.getEnd().equals(scheduleDTO.getEnd())) schedule.setEnd(schedule.getEnd());
-            if (!schedule.getKind().equals(scheduleDTO.getKind())) schedule.setKind(schedule.getKind());
-            if (!schedule.getName().equals(scheduleDTO.getName())) schedule.setName(schedule.getName());
-            if (!schedule.getStart().equals(scheduleDTO.getStart())) schedule.setStart(schedule.getStart());
-            if (!schedule.isTimed() == scheduleDTO.isTimed()) schedule.setTimed(schedule.isTimed());
+            if (!schedule.getColor().equals(scheduleDTO.getColor())) schedule.setColor(scheduleDTO.getColor());
+            if (!schedule.getDetails().equals(scheduleDTO.getDetails())) schedule.setDetails(scheduleDTO.getDetails());
+            if (!schedule.getEnd().equals(scheduleDTO.getEnd())) schedule.setEnd(scheduleDTO.getEnd());
+            if (!schedule.getKind().equals(scheduleDTO.getKind())) schedule.setKind(scheduleDTO.getKind());
+            if (!schedule.getName().equals(scheduleDTO.getName())) schedule.setName(scheduleDTO.getName());
+            if (!schedule.getStart().equals(scheduleDTO.getStart())) schedule.setStart(scheduleDTO.getStart());
+            if (!schedule.isTimed() == scheduleDTO.isTimed()) schedule.setTimed(scheduleDTO.isTimed());
             scheduleRepository.save(schedule);
         }
     }
