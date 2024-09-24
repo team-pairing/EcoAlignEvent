@@ -19,4 +19,7 @@ public interface ScheduleService {
 
     // 일정 조회
     List<ScheduleEntity> allSchedule();
+
+    // 토큰 검증
+    boolean validateAuth(String token);
 }

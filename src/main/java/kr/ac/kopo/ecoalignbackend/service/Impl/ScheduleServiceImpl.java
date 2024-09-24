@@ -2,6 +2,7 @@ package kr.ac.kopo.ecoalignbackend.service.Impl;
 
 import kr.ac.kopo.ecoalignbackend.dto.ScheduleDTO;
 import kr.ac.kopo.ecoalignbackend.entity.ScheduleEntity;
+import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
 import kr.ac.kopo.ecoalignbackend.repository.ScheduleRepository;
 import kr.ac.kopo.ecoalignbackend.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ScheduleServiceImpl implements ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    private final JwtUtil jwtUtil;
 
     // 일정 추가
     public void addSchedule(Map<String, Object> request){
@@ -60,5 +62,11 @@ public class ScheduleServiceImpl implements ScheduleService {
     // 일정 조회
     public List<ScheduleEntity> allSchedule(){
         return scheduleRepository.findAll();
+    }
+
+    // 토큰 검증
+    public boolean validateAuth(String token) {
+        token = jwtUtil.tokenSorting(token);
+        return jwtUtil.validateToken(token);
     }
 }
