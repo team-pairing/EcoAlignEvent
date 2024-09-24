@@ -12,4 +12,8 @@ public interface GroupService {
     boolean deleteGroup(String id, String groupItem);
     // 모든 그룹 목록 조회
     List<GroupEntity> getAllGroups();
+    // 토큰 검증
+    boolean validateAuth(String token);
+    // 그룹 중복 확인
+    boolean checkGroupItem(String groupItem);
 }
