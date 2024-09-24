@@ -40,7 +40,7 @@ public class UserController {
             if (result.isEmpty()) { // 아이디가 데이터베이스에 없는 경우
                 return ResponseEntity.accepted().build();
             } else { // 아이디가 데이터베이스에 존재하는 경우
-                return ResponseEntity.badRequest().build();
+                return ResponseEntity.status(409).build();
             }
         }
     }
@@ -81,11 +81,20 @@ public class UserController {
             return ResponseEntity.badRequest().build();
 
         } else {
-            boolean result = userService.deleteUserEntity(memberId, password);
-            if (result) { // 정상적으로 회원 탈퇴 된 경우
-                return ResponseEntity.ok().build();
-            } else { // 정상적으로 회원 탈퇴되지 않은 경우
-                return ResponseEntity.notFound().build();
+            int result = userService.deleteUserEntity(memberId, password);
+            switch (result) {
+                case -1 :
+                    return ResponseEntity.notFound().build(); // 아이디가 없는 경우
+
+                case 0 :
+                    return ResponseEntity.status(403).build(); // 비밀번호가 틀린 경우
+
+                case 1 :
+
+                    return ResponseEntity.ok().build(); // 성공!
+
+                default:
+                    return ResponseEntity.internalServerError().build();  // 그 외 오류
             }
         }
     }

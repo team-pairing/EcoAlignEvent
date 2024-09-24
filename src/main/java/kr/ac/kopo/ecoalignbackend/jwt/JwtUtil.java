@@ -128,6 +128,7 @@ public class JwtUtil {
         }
     }
 
+    // 6-1. token 처리
     public String tokenSorting(String bearerToken){
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")){
             return bearerToken.substring(7);

@@ -142,17 +142,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // 사용자 삭제
     @Transactional
-    public boolean deleteUserEntity(String memberId, String password){
+    public int deleteUserEntity(String memberId, String password){
         UserEntity requestUser = userRepository.findUserByMemberId(memberId);
-
-        // 암호화된 비밀번호와 일치하는지 확인
-        String encodedPassword = requestUser.getPassword();
-        if (passwordEncoder.matches(password, encodedPassword)){
-            int result = userRepository.deleteUserEntityByMemberId(memberId);
-            log.info("result = {}", result);
-            return result > 0;
+        if (userRepository.findByMemberId(memberId).isEmpty()) {
+            return -1; // 아이디가 없는 경우
         } else {
-            return false;
+            // 암호화된 비밀번호와 일치하는지 확인
+            String encodedPassword = requestUser.getPassword();
+            if (passwordEncoder.matches(password, encodedPassword)){
+                userRepository.deleteUserEntityByMemberId(memberId);
+                return 1; // 비밀번호가 일치하는 경우
+            } else {
+                return 0; // 비밀번호가 틀린 경우
+            }
         }
     }
 

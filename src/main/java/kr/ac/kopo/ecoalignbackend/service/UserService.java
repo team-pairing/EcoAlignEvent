@@ -38,7 +38,7 @@ public interface UserService extends UserDetailsService {
     UserEntity createUserEntity(UserEntity userEntity);
 
     // 사용자 삭제
-    boolean deleteUserEntity(String memberId, String password);
+    int deleteUserEntity(String memberId, String password);
 
     // DTO를 Entity로 변환
     default UserEntity dtoToEntity(UserDTO dto){
