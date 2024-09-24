@@ -23,12 +23,12 @@ public class MailService {
         StringBuilder key = new StringBuilder();
 
         for (int i = 0; i < 8; i++) { // 인증 코드 8자리
-            int index = random.nextInt(3); // 0~2까지 랜덤, 랜덤값으로 switch문 실행
+            int index = random.nextInt(2); // 0~2까지 랜덤, 랜덤값으로 switch문 실행
 
             switch (index) {
-                case 0 -> key.append((char) (random.nextInt(26) + 97)); // 소문자
-                case 1 -> key.append((char) (random.nextInt(26) + 65)); // 대문자
-                case 2 -> key.append(random.nextInt(10)); // 숫자
+//                case 0 -> key.append((char) (random.nextInt(26) + 97)); // 소문자
+                case 0 -> key.append((char) (random.nextInt(26) + 65)); // 대문자
+                case 1 -> key.append(random.nextInt(10)); // 숫자
             }
         }
         return key.toString();

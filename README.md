@@ -30,3 +30,8 @@
 - schedule entity, schedule dto, schedule repository, schedule service, schedule service impl, schedule controller 작성
 - 일정 추가, 일정 수정, 일정 삭제, 일정 조회 임시완료
 - 그룹 삭제 시 일정 함께 삭제되도록 수정
+
+- 이메일 인증, 이메일 인증번호 전송, 아이디 중복 확인, 회원 정보 저장, 회원 탈퇴, 로그인, 아이디 찾기, 사용자 이메일 인증코드 전송, 사용자 이메일 인증, 비밀번호 재설정 최종완료
+- 로그아웃 메소드 필요
+- 일정 조회, 일정 삭제, 일정 수정, 일정 추가, 그룹 추가, 그룹 삭제, 그룹 조회 ResponseEntity 반환 필요
+- Memo 부분 시작 전

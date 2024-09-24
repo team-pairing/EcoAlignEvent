@@ -24,5 +24,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findBymemberIdAndEmail(String memberId,String email);
 
     // 아이디랑 비밀번호로 사용자 삭제
-    boolean deleteUserEntityByMemberIdAndPassword(String memberId, String password);
+    int deleteUserEntityByMemberId(String memberId);
 }

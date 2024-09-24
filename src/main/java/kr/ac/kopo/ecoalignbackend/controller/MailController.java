@@ -14,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/email")
+@CrossOrigin(origins = "http://192.168.24.189:8081", exposedHeaders = "Authorization")
 public class MailController {
 
     private final MailService mailService;
@@ -43,7 +44,7 @@ public class MailController {
                 Token token = jwtUtil.generateToken(authCode); // 인증 코드로 JWT 토큰 생성
                 HttpHeaders headers = new HttpHeaders();
                 headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
-
+                System.out.println("Authorization 정보" + token.getAccessToken());
                 return ResponseEntity.ok().headers(headers).build(); // 이메일 전송 성공 시
             }
         }
@@ -53,22 +54,26 @@ public class MailController {
     @ResponseBody
     @PostMapping("/check")
     public ResponseEntity<?> emailCheck(@RequestBody Map<String, Object> code, @RequestHeader("Authorization") String token) {
-        String authCode = jwtUtil.extractSubject(token); // 헤더에 포함되어있는 토큰에서 인증 코드를 추출
-        String checkNumber = (String) code.get("checkNumber");
+        token = jwtUtil.tokenSorting(token);
+        if (jwtUtil.validateToken(token)) {
+            String authCode = jwtUtil.extractSubject(token); // 헤더에 포함되어있는 토큰에서 인증 코드를 추출
+            String checkNumber = (String) code.get("checkNumber");
 
-        if (authCode != null && !authCode.isEmpty() &&
-                checkNumber != null && !checkNumber.isEmpty()){
+            if (authCode != null && !authCode.isEmpty() &&
+                    checkNumber != null && !checkNumber.isEmpty()) {
 
-            if (authCode.equals(checkNumber)) {
-                return ResponseEntity.ok().build(); // 인증에 성공했을 때
+                if (authCode.equals(checkNumber)) {
+                    return ResponseEntity.ok().build(); // 인증에 성공했을 때
+
+                } else {
+                    return ResponseEntity.notFound().build(); // 인증에 실패한 경우
+                }
 
             } else {
-                return ResponseEntity.notFound().build(); // 인증에 실패한 경우
+                return ResponseEntity.badRequest().build(); // 입력이 빈 경우
             }
-
-        } else {
-            return ResponseEntity.badRequest().build(); // 입력이 빈 경우
         }
+        return ResponseEntity.internalServerError().build();
     }
 }
 

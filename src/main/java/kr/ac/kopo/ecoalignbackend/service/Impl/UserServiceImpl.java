@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -88,6 +89,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     // 아이디 찾기
+    @Transactional
     public String findMemberIdByNameAndEmailAndBirth(String name, String email, String birth){
         if (userRepository.findByNameAndEmailAndBirth(name, email, birth).isPresent()) {
             UserEntity user = userRepository.findUserByNameAndEmailAndBirth(name, email, birth);
@@ -139,14 +141,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     // 사용자 삭제
+    @Transactional
     public boolean deleteUserEntity(String memberId, String password){
         UserEntity requestUser = userRepository.findUserByMemberId(memberId);
 
         // 암호화된 비밀번호와 일치하는지 확인
         String encodedPassword = requestUser.getPassword();
         if (passwordEncoder.matches(password, encodedPassword)){
-            return userRepository.deleteUserEntityByMemberIdAndPassword(memberId, password);
-
+            int result = userRepository.deleteUserEntityByMemberId(memberId);
+            log.info("result = {}", result);
+            return result > 0;
         } else {
             return false;
         }

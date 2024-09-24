@@ -128,6 +128,14 @@ public class JwtUtil {
         }
     }
 
+    public String tokenSorting(String bearerToken){
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")){
+            return bearerToken.substring(7);
+        } else {
+            return null;
+        }
+    }
+
     // 7. JWT 복호화 : token의 정보 반환
     public Authentication getAuthentication(String accessToken) {
         // claim 추출 - 복호화
