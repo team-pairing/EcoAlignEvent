@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.Random;
 
 @Entity
-@Table(name = "group")
+@Table(name = "groups")
 @Data
 public class GroupEntity {
     @Id
@@ -18,7 +18,7 @@ public class GroupEntity {
 
     @Column(nullable = false)
     @NotNull
-    private String groupItem;
+    private String groupItem ;
 
     public void setId() {
         Random random = new Random();

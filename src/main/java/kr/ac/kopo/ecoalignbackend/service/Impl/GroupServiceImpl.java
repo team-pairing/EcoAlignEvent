@@ -51,8 +51,6 @@ public class GroupServiceImpl implements GroupService {
 
     // 그룹 중복 확인
     public boolean checkGroupItem(String groupItem) {
-        if (groupRepository.findByGroupItem(groupItem).isPresent()){
-            return true;
-        } else return false;
+        return groupRepository.findByGroupItem(groupItem).isPresent();
     }
 }
