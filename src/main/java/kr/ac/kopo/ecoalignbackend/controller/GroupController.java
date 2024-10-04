@@ -47,9 +47,7 @@ public class GroupController {
     @GetMapping("/allGroup")
     public ResponseEntity<?> allGroup(@RequestHeader("Authorization") String token) {
         if (groupService.validateAuth(token)) {
-            Map<String, List<GroupEntity>> resultBody = new HashMap<>();
-            resultBody.put("allGroup", groupService.getAllGroups());
-            return ResponseEntity.ok().body(resultBody); // 그룹 조회 성공
+            return ResponseEntity.ok().body(groupService.getAllGroups()); // 그룹 조회 성공
         } else return ResponseEntity.internalServerError().build(); // 토큰 만료 시 에러
     }
 }

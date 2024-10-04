@@ -16,9 +16,12 @@ public class GroupEntity {
     @NotNull
     private String id;
 
-    @Column(nullable = false)
+    @Column(name ="group_item", nullable = false)
     @NotNull
-    private String groupItem ;
+    private String groupItem = "기본그룹";
+
+    @Column(name = "member_id", nullable = false)
+    private String memberId;
 
     public void setId() {
         Random random = new Random();

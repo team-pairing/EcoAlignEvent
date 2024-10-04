@@ -39,8 +39,9 @@ public class MemoController {
 
     // 메모 삭제
     @PostMapping("/deleteMemo")
-    public ResponseEntity<?> deleteMemo(@RequestBody String memoId, @RequestHeader("Authorization") String token){
+    public ResponseEntity<?> deleteMemo(@RequestBody Map<String, Object> requestMemo, @RequestHeader("Authorization") String token){
         if (memoService.validateAuth(token)) {
+            String memoId = (String) requestMemo.get("id");
             memoService.deleteMemo(memoId);
             return ResponseEntity.ok().build(); // 삭제 성공
         } else return ResponseEntity.internalServerError().build(); // 토큰 만료 시 에러
@@ -50,9 +51,7 @@ public class MemoController {
     @GetMapping("/allMemo")
     public ResponseEntity<?> allMemo(@RequestHeader("Authorization") String token){
         if (memoService.validateAuth(token)) {
-            Map<String, List<MemoEntity>> resultBody = new HashMap<>();
-            resultBody.put("allMemo", memoService.allMemo());
-            return ResponseEntity.ok().body(resultBody); // 조회 성공
+            return ResponseEntity.ok().body(memoService.allMemo()); // 조회 성공
         } else return ResponseEntity.internalServerError().build(); // 토큰 만료 시 에러
     }
 }

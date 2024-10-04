@@ -46,7 +46,8 @@ public class ScheduleEntity {
     @NotNull
     private boolean timed;
 
-
+    @Column(name = "member_id", nullable = false)
+    private String memberId;
 
     public void setId() {
         Random random = new Random();

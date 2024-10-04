@@ -29,6 +29,9 @@ public class MemoEntity {
     @Column
     private String Date;
 
+    @Column(name = "member_id", nullable = false)
+    private String memberId;
+
     public void setId() {
         Random random = new Random();
         StringBuilder key = new StringBuilder();

@@ -41,3 +41,5 @@
 - 그룹 추가, 그룹 삭제, 그룹 조회 시 토큰 만료로 인한 에러 처리 - response 처리
 - memo entity, memo dto, memo repository, memo service, memo service impl, memo controller 작성
 - 일정 수정 메소드 수정, 메모 추가, 메모 수정, 메모 삭제, 메모 조회 임시완료
+
+- 모든 메소드 확인 및 연결 성공, 메모, 그룹, 일정에 아이디 식별 추가 시작

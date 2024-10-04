@@ -35,8 +35,14 @@ public class MemoServiceImpl implements MemoService {
     public boolean updateMemo(MemoDTO memoDTO) {
         if (memoRepository.findById(memoDTO.getId()).isPresent()) {
             MemoEntity memoEntity = memoRepository.findById(memoDTO.getId()).get();
-            if (!memoEntity.getTitle().equals(memoDTO.getTitle())) memoEntity.setTitle(memoDTO.getTitle());
-            if (!memoEntity.getContent().equals(memoDTO.getContent())) memoEntity.setContent(memoDTO.getContent());
+            if (!memoEntity.getTitle().equals(memoDTO.getTitle())) {
+                memoEntity.setTitle(memoDTO.getTitle());
+                memoRepository.save(memoEntity);
+            }
+            if (!memoEntity.getContent().equals(memoDTO.getContent())) {
+                memoEntity.setContent(memoDTO.getContent());
+                memoRepository.save(memoEntity);
+            }
             return true;
         } else return false;
     }

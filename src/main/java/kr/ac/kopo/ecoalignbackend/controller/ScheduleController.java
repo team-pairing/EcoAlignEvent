@@ -57,9 +57,7 @@ public class ScheduleController {
     @GetMapping("/allSchedule")
     public ResponseEntity<?> allSchedule(@RequestHeader("Authorization") String token) {
         if (scheduleService.validateAuth(token)) {
-            Map<String, List<ScheduleEntity>> resultBody = new HashMap<>();
-            resultBody.put("allSchedule", scheduleService.allSchedule());
-            return ResponseEntity.ok().body(resultBody); // 일정 조회 성공
+            return ResponseEntity.ok().body(scheduleService.allSchedule()); // 일정 조회 성공
         } else {
             return ResponseEntity.internalServerError().build(); // 사용자 토큰 만료 시 오류
         }
