@@ -87,7 +87,7 @@ public class JwtUtil {
     }
 
     // 4. Claims에서 User Id(memberId) 추출
-    public String getUserId(String token){
+    public String getMemberId(String token){
         return parseClaims(token).get("memberId", String.class);
     }
 

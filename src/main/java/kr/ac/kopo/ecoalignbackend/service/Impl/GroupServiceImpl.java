@@ -53,4 +53,9 @@ public class GroupServiceImpl implements GroupService {
     public boolean checkGroupItem(String groupItem) {
         return groupRepository.findByGroupItem(groupItem).isPresent();
     }
+
+    // 헤더에서 아이디 식별
+    public String getMemberId(String token) {
+        return jwtUtil.getMemberId(token);
+    }
 }

@@ -16,4 +16,6 @@ public interface GroupService {
     boolean validateAuth(String token);
     // 그룹 중복 확인
     boolean checkGroupItem(String groupItem);
+    // 헤더에서 아이디 식별
+    String getMemberId(String token);
 }

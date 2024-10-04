@@ -69,4 +69,9 @@ public class ScheduleServiceImpl implements ScheduleService {
         token = jwtUtil.tokenSorting(token);
         return jwtUtil.validateToken(token);
     }
+
+    // 헤더에서 아이디 식별
+    public String getMemberId(String token) {
+        return jwtUtil.getMemberId(token);
+    }
 }

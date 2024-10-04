@@ -21,4 +21,6 @@ public interface MemoService {
 
     // 토큰 검증
     boolean validateAuth(String token);
+    // 헤더에서 아이디 식별
+    String getMemberId(String token);
 }
