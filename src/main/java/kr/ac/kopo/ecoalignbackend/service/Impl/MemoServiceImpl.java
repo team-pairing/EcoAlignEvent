@@ -17,7 +17,7 @@ public class MemoServiceImpl implements MemoService {
     private final MemoRepository memoRepository;
     private final JwtUtil jwtUtil;
     // 메모 추가
-    public void addMemo(Map<String, Object> request){
+    public void addMemo(Map<String, Object> request, String memberId){
         String title = (String) request.get("title");
         String content = (String) request.get("content");
         String date = (String) request.get("date");
@@ -27,6 +27,7 @@ public class MemoServiceImpl implements MemoService {
         memoEntity.setTitle(title);
         memoEntity.setContent(content);
         memoEntity.setDate(date);
+        memoEntity.setMemberId(memberId);
 
         memoRepository.save(memoEntity);
     }
@@ -56,8 +57,8 @@ public class MemoServiceImpl implements MemoService {
     }
 
     // 메모 조회
-    public List<MemoEntity> allMemo() {
-        return memoRepository.findAll();
+    public List<MemoEntity> allMemo(String memberId) {
+        return memoRepository.findAllByMemberId(memberId);
     }
 
     // 토큰 검증

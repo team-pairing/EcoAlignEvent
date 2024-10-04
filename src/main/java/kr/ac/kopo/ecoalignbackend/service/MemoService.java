@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface MemoService {
     // 메모 추가
-    void addMemo(Map<String, Object> request);
+    void addMemo(Map<String, Object> request, String memberId);
 
     // 메모 수정
     boolean updateMemo(MemoDTO memoDTO);
@@ -17,7 +17,7 @@ public interface MemoService {
     void deleteMemo(String memoId);
 
     // 메모 조회
-    List<MemoEntity> allMemo();
+    List<MemoEntity> allMemo(String memberId);
 
     // 토큰 검증
     boolean validateAuth(String token);

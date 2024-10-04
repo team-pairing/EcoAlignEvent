@@ -23,7 +23,8 @@ public class MemoController {
     @PostMapping("/addMemo")
     public ResponseEntity<?> addMemo(@RequestBody Map<String, Object> request, @RequestHeader("Authorization") String token){
         if (memoService.validateAuth(token)) {
-            memoService.addMemo(request);
+            String memberId = memoService.getMemberId(token);
+            memoService.addMemo(request, memberId);
             return ResponseEntity.ok().build(); // 추가 성공
         } else return ResponseEntity.internalServerError().build(); // 토큰 만료 시 에러
     }
@@ -51,7 +52,8 @@ public class MemoController {
     @GetMapping("/allMemo")
     public ResponseEntity<?> allMemo(@RequestHeader("Authorization") String token){
         if (memoService.validateAuth(token)) {
-            return ResponseEntity.ok().body(memoService.allMemo()); // 조회 성공
+            String memberId = memoService.getMemberId(token);
+            return ResponseEntity.ok().body(memoService.allMemo(memberId)); // 조회 성공
         } else return ResponseEntity.internalServerError().build(); // 토큰 만료 시 에러
     }
 }
