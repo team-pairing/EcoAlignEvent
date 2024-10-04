@@ -4,6 +4,9 @@ import kr.ac.kopo.ecoalignbackend.dto.UserDTO;
 import kr.ac.kopo.ecoalignbackend.entity.UserEntity;
 import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
 import kr.ac.kopo.ecoalignbackend.jwt.Token;
+import kr.ac.kopo.ecoalignbackend.repository.GroupRepository;
+import kr.ac.kopo.ecoalignbackend.repository.MemoRepository;
+import kr.ac.kopo.ecoalignbackend.repository.ScheduleRepository;
 import kr.ac.kopo.ecoalignbackend.repository.UserRepository;
 import kr.ac.kopo.ecoalignbackend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,9 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
+    private final GroupRepository groupRepository;
+    private final MemoRepository memoRepository;
+    private final ScheduleRepository scheduleRepository;
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -150,6 +156,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             // 암호화된 비밀번호와 일치하는지 확인
             String encodedPassword = requestUser.getPassword();
             if (passwordEncoder.matches(password, encodedPassword)){
+                memoRepository.deleteAllByMemberId(memberId);
+                scheduleRepository.deleteAllByMemberId(memberId);
+                groupRepository.deleteAllByMemberId(memberId);
                 userRepository.deleteUserEntityByMemberId(memberId);
                 return 1; // 비밀번호가 일치하는 경우
             } else {

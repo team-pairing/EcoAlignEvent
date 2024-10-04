@@ -13,4 +13,5 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 
     // 일정 종류(group)으로 모든 일정 삭제
     void deleteAllByKind(String kind);
+    void deleteAllByMemberId(String memberId);
 }

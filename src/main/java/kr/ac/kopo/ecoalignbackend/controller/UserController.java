@@ -82,20 +82,15 @@ public class UserController {
 
         } else {
             int result = userService.deleteUserEntity(memberId, password);
-            switch (result) {
-                case -1 :
-                    return ResponseEntity.notFound().build(); // 아이디가 없는 경우
+            return switch (result) {
+                case -1 -> ResponseEntity.notFound().build(); // 아이디가 없는 경우
 
-                case 0 :
-                    return ResponseEntity.status(403).build(); // 비밀번호가 틀린 경우
+                case 0 -> ResponseEntity.status(403).build(); // 비밀번호가 틀린 경우
 
-                case 1 :
+                case 1 -> ResponseEntity.ok().build(); // 성공!
 
-                    return ResponseEntity.ok().build(); // 성공!
-
-                default:
-                    return ResponseEntity.internalServerError().build();  // 그 외 오류
-            }
+                default -> ResponseEntity.internalServerError().build();  // 그 외 오류
+            };
         }
     }
 
