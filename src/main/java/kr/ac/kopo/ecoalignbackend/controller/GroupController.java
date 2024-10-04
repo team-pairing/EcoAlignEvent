@@ -23,10 +23,11 @@ public class GroupController {
     public ResponseEntity<?> addGroup (@RequestBody Map<String, Object> request, @RequestHeader("Authorization") String token) {
         if (groupService.validateAuth(token)) {
             String groupItem = (String) request.get("groupItem");
+            String memberId = groupService.getMemberId(token);
             if (groupService.checkGroupItem(groupItem)) {
                 return ResponseEntity.status(409).build(); // 중복된 그룹 존재할 경우
             } else {
-                groupService.addGroup(groupItem);
+                groupService.addGroup(groupItem, memberId);
                 return ResponseEntity.ok().build(); // 성공적으로 그룹을 추가한 경우
             }
         } else return ResponseEntity.internalServerError().build(); // 토큰 만료 시 에러
@@ -47,7 +48,8 @@ public class GroupController {
     @GetMapping("/allGroup")
     public ResponseEntity<?> allGroup(@RequestHeader("Authorization") String token) {
         if (groupService.validateAuth(token)) {
-            return ResponseEntity.ok().body(groupService.getAllGroups()); // 그룹 조회 성공
+            String memberId = groupService.getMemberId(token);
+            return ResponseEntity.ok().body(groupService.getAllGroups(memberId)); // 그룹 조회 성공
         } else return ResponseEntity.internalServerError().build(); // 토큰 만료 시 에러
     }
 }

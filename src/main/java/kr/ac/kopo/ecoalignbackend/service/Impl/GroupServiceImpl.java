@@ -19,9 +19,10 @@ public class GroupServiceImpl implements GroupService {
     private final JwtUtil jwtUtil;
 
     // 그룹 추가
-    public void addGroup(String groupItem) {
+    public void addGroup(String groupItem, String memberId) {
         GroupEntity group = new GroupEntity();
         group.setGroupItem(groupItem);
+        group.setMemberId(memberId);
         group.setId();
         groupRepository.save(group);
     }
@@ -39,8 +40,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     // 모든 그룹 목록 조회
-    public List<GroupEntity> getAllGroups() {
-        return groupRepository.findAll();
+    public List<GroupEntity> getAllGroups(String memberId) {
+        return groupRepository.findAllByMemberId(memberId);
     }
 
     // 토큰 검증
