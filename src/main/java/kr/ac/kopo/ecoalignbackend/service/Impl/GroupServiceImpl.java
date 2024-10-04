@@ -1,6 +1,7 @@
 package kr.ac.kopo.ecoalignbackend.service.Impl;
 
 import kr.ac.kopo.ecoalignbackend.entity.GroupEntity;
+import kr.ac.kopo.ecoalignbackend.entity.ScheduleEntity;
 import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
 import kr.ac.kopo.ecoalignbackend.repository.GroupRepository;
 import kr.ac.kopo.ecoalignbackend.repository.ScheduleRepository;
@@ -28,10 +29,11 @@ public class GroupServiceImpl implements GroupService {
     }
 
     // 그룹 삭제
-    public boolean deleteGroup(String id, String groupItem) {
+    public boolean deleteGroup(String id) {
         Optional<GroupEntity> group = groupRepository.findById(id);
 
-        if (group.isPresent() && group.get().getGroupItem().equals(groupItem)) {
+        if (group.isPresent()) {
+            String groupItem = group.get().getGroupItem();
             scheduleRepository.deleteAllByKind(groupItem); // 해당 그룹에 속해있는 일정들 삭제
             groupRepository.delete(group.get());
             return true;

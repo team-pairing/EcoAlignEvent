@@ -38,9 +38,10 @@ public class GroupController {
     public ResponseEntity<?> deleteGroup(@RequestBody Map<String, Object> requestGroup, @RequestHeader("Authorization") String token){
         if (groupService.validateAuth(token)) {
             String id = (String) requestGroup.get("id");
-            String groupItem = (String) requestGroup.get("groupItem");
-            groupService.deleteGroup(id, groupItem);
-            return ResponseEntity.ok().build(); // 그룹 삭제 성공
+            boolean result = groupService.deleteGroup(id);
+            if (result) {
+                return ResponseEntity.ok().build(); // 그룹 삭제 성공
+            } else return ResponseEntity.notFound().build();
         } else return ResponseEntity.internalServerError().build(); // 토큰 만료 시 에러
     }
 
