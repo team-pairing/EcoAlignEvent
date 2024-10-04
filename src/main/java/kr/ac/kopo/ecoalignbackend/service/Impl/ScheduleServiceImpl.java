@@ -18,7 +18,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     private final JwtUtil jwtUtil;
 
     // 일정 추가
-    public void addSchedule(Map<String, Object> request){
+    public void addSchedule(Map<String, Object> request, String memberId){
 
         ScheduleEntity schedule = new ScheduleEntity();
         schedule.setId();
@@ -29,6 +29,7 @@ public class ScheduleServiceImpl implements ScheduleService {
         schedule.setName((String) request.get("name"));
         schedule.setStart((String) request.get("start"));
         schedule.setTimed((boolean) request.get("timed"));
+        schedule.setMemberId(memberId);
 
         scheduleRepository.save(schedule);
     };
@@ -60,8 +61,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     // 일정 조회
-    public List<ScheduleEntity> allSchedule(){
-        return scheduleRepository.findAll();
+    public List<ScheduleEntity> allSchedule(String memberId){
+        return scheduleRepository.findAllByMemberId(memberId);
     }
 
     // 토큰 검증

@@ -9,7 +9,7 @@ import java.util.Map;
 public interface ScheduleService {
 
     // 일정 추가
-    void addSchedule(Map<String, Object> request);
+    void addSchedule(Map<String, Object> request, String memberId);
 
     // 일정 수정
     void updateSchedule(ScheduleDTO scheduleDTO);
@@ -18,7 +18,7 @@ public interface ScheduleService {
     void deleteSchedule(String scheduleId);
 
     // 일정 조회
-    List<ScheduleEntity> allSchedule();
+    List<ScheduleEntity> allSchedule(String memberId);
 
     // 토큰 검증
     boolean validateAuth(String token);

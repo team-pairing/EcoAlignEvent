@@ -23,7 +23,8 @@ public class ScheduleController {
     @PostMapping("/addSchedule")
     public ResponseEntity<?> addSchedule(@RequestBody Map<String, Object> request, @RequestHeader("Authorization") String token){
         if (scheduleService.validateAuth(token)) {
-            scheduleService.addSchedule(request);
+            String memberId = scheduleService.getMemberId(token);
+            scheduleService.addSchedule(request, memberId);
             return ResponseEntity.ok().build(); // 일정 추가 성공
         } else {
             return ResponseEntity.internalServerError().build(); // 사용자 토큰 만료 시 오류
@@ -57,7 +58,8 @@ public class ScheduleController {
     @GetMapping("/allSchedule")
     public ResponseEntity<?> allSchedule(@RequestHeader("Authorization") String token) {
         if (scheduleService.validateAuth(token)) {
-            return ResponseEntity.ok().body(scheduleService.allSchedule()); // 일정 조회 성공
+            String memberId = scheduleService.getMemberId(token);
+            return ResponseEntity.ok().body(scheduleService.allSchedule(memberId)); // 일정 조회 성공
         } else {
             return ResponseEntity.internalServerError().build(); // 사용자 토큰 만료 시 오류
         }
