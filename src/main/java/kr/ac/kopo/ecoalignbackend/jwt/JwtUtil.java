@@ -80,6 +80,7 @@ public class JwtUtil {
     // 3. JWT Claims 추출
     public Claims parseClaims(String token) {
         try {
+            token = tokenSorting(token);
             return Jwts.parser().verifyWith((SecretKey) secretKey).build().parseSignedClaims(token).getPayload();
         } catch (ExpiredJwtException e){
             return e.getClaims();
@@ -88,7 +89,13 @@ public class JwtUtil {
 
     // 4. Claims에서 User Id(memberId) 추출
     public String getMemberId(String token){
-        return parseClaims(token).get("memberId", String.class);
+        token = tokenSorting(token);
+        return Jwts.parser()
+                .verifyWith((SecretKey) secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 
     // 5. Claims에서 Subject 추출
