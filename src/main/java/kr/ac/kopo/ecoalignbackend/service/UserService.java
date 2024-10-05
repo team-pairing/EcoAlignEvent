@@ -10,6 +10,9 @@ import java.util.Optional;
 
 public interface UserService extends UserDetailsService {
 
+    // 이메일을 가진 사용자가 존재하는지 확인
+    Optional<UserEntity> findByEmail(String email);
+
     // 회원가입
     UserDTO registerUser(Map<String, Object> requestUser);
 

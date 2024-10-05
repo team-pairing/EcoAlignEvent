@@ -5,6 +5,7 @@ import kr.ac.kopo.ecoalignbackend.dto.MailDTO;
 import kr.ac.kopo.ecoalignbackend.jwt.JwtUtil;
 import kr.ac.kopo.ecoalignbackend.jwt.Token;
 import kr.ac.kopo.ecoalignbackend.service.MailService;
+import kr.ac.kopo.ecoalignbackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -19,35 +20,38 @@ public class MailController {
 
     private final MailService mailService;
     private final JwtUtil jwtUtil;
+    private final UserService userService;
 
     @Autowired
-    public MailController(MailService mailService, JwtUtil jwtUtil) {
+    public MailController(MailService mailService, JwtUtil jwtUtil, UserService userService) {
         this.mailService = mailService;
         this.jwtUtil = jwtUtil;
+        this.userService = userService;
     }
 
     // 이메일 인증번호 전송
     @ResponseBody
     @PostMapping("/send")
     public ResponseEntity<?> emailSend(@RequestBody MailDTO mailDTO) throws MessagingException {
-
-        if (mailDTO.getEmail() == null || mailDTO.getEmail().isEmpty()) {
-            return ResponseEntity.badRequest().build(); // 사용자가 입력 없이 요청한 경우
-
-        } else {
-            String authCode = mailService.sendSimpleMessage(mailDTO.getEmail());
-
-            if (authCode == null || authCode.isEmpty()) {
-                return ResponseEntity.internalServerError().build(); // 이메일 전송 실패 시
+        if (userService.findByEmail(mailDTO.getEmail()).isEmpty()) {
+            if (mailDTO.getEmail() == null || mailDTO.getEmail().isEmpty()) {
+                return ResponseEntity.badRequest().build(); // 사용자가 입력 없이 요청한 경우
 
             } else {
-                Token token = jwtUtil.generateToken(authCode); // 인증 코드로 JWT 토큰 생성
-                HttpHeaders headers = new HttpHeaders();
-                headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
-                System.out.println("Authorization 정보" + token.getAccessToken());
-                return ResponseEntity.ok().headers(headers).build(); // 이메일 전송 성공 시
+                String authCode = mailService.sendSimpleMessage(mailDTO.getEmail());
+
+                if (authCode == null || authCode.isEmpty()) {
+                    return ResponseEntity.internalServerError().build(); // 이메일 전송 실패 시
+
+                } else {
+                    Token token = jwtUtil.generateToken(authCode); // 인증 코드로 JWT 토큰 생성
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.set("Authorization", token.getGrantType() + " " + token.getAccessToken());
+                    System.out.println("Authorization 정보" + token.getAccessToken());
+                    return ResponseEntity.ok().headers(headers).build(); // 이메일 전송 성공 시
+                }
             }
-        }
+        } else return ResponseEntity.status(409).build();
     }
 
     // 이메일 인증

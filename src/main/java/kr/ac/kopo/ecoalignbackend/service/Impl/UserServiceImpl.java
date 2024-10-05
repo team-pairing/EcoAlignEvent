@@ -34,6 +34,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    // 이메일을 가진 사용자가 존재하는지 확인
+    public Optional<UserEntity> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     // 회원가입
     public UserDTO registerUser(Map<String, Object> requestUser){
         // birth 또는 gender를 입력하지 않았을 경우 default 값으로 설정
