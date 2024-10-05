@@ -23,7 +23,7 @@ public class MemoEntity {
     @NotNull
     private String title;
 
-    @Column
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String content;
 
     @Column
