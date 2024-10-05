@@ -3,6 +3,7 @@ package kr.ac.kopo.ecoalignbackend.controller;
 import kr.ac.kopo.ecoalignbackend.entity.GroupEntity;
 import kr.ac.kopo.ecoalignbackend.service.GroupService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class GroupController {
         } else return ResponseEntity.internalServerError().build(); // 토큰 만료 시 에러
     }
 
+    @Transactional
     // 그룹 삭제
     @PostMapping("/deleteGroup")
     public ResponseEntity<?> deleteGroup(@RequestBody Map<String, Object> requestGroup, @RequestHeader("Authorization") String token){
