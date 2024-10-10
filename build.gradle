@@ -46,8 +46,6 @@ dependencies {
 
 	//ModelMapper
 	implementation 'org.modelmapper:modelmapper:2.4.2'
-
-	implementation 'io.github.cdimascio:dotenv-java:3.0.1' // 암호화 키 환경변수로 관리하기 위한 설정
 	implementation 'org.springframework.boot:spring-boot-starter-mail' // 이메일 인증을 위한 설정
 
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:2.6.0'
