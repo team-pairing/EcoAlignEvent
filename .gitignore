@@ -36,5 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 
-### JWT secret key ###
-.env
+#### JWT secret key ###
+#.env
